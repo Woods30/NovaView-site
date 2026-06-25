@@ -169,7 +169,7 @@ function LandingContent({ locale }: { locale: Locale }) {
           <div className="grid md:grid-cols-2 gap-5">
             <PlatformCard
               badge="iOS"
-              title="iPhone · iPad"
+              title={t('dl.ios.title')}
               sub={t('ios.sub')}
               cta={{
                 label: t('ios.cta'),
@@ -179,7 +179,7 @@ function LandingContent({ locale }: { locale: Locale }) {
             />
             <PlatformCard
               badge="APK"
-              title="Android 手机 · 平板"
+              title={t('dl.android.title')}
               sub={t('and.sub')}
               cta={{
                 label: t('and.cta'),

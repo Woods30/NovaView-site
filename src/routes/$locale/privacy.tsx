@@ -33,7 +33,7 @@ function PrivacyContent({ locale: _ }: { locale: Locale }) {
     <>
       <section className="pt-16 pb-8">
         <Container className="max-w-[720px]">
-          <span className="font-mono text-xs uppercase tracking-widest text-fg-muted">Privacy Policy</span>
+          <span className="font-mono text-xs uppercase tracking-widest text-fg-muted">{t('priv.eyebrow')}</span>
           <h1
             className="text-4xl lg:text-5xl font-semibold leading-tight tracking-tight mt-4"
             dangerouslySetInnerHTML={{ __html: t('priv.title') }}

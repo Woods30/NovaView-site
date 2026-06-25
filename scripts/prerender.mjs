@@ -194,7 +194,16 @@ async function main() {
         await page.waitForTimeout(300);
 
         const rawHtml = await page.content();
-        const out = injectMeta(rawHtml, spec);
+        // Strip the preview server's absolute origin from module/script URLs.
+        // Vite emits `http://127.0.0.1:4173/assets/...` for modulepreload + module
+        // scripts in the SPA shell. On Cloudflare Pages we want root-relative
+        // URLs (`/assets/...`) so they resolve to the deployed origin regardless
+        // of host. Same shape for `localhost`.
+        const strippedHtml = rawHtml.replace(
+          /https?:\/\/(127\.0\.0\.1|localhost):4173\//g,
+          '/',
+        );
+        const out = injectMeta(strippedHtml, spec);
         const target = outputPathFor(route);
         mkdirSync(dirname(target), { recursive: true });
         writeFileSync(target, out, 'utf8');

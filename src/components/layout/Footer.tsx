@@ -28,7 +28,10 @@ export function Footer({ locale }: { locale: Locale }) {
               <Logo size="sm" alt={t('brand.logo_alt')} />
               <span className="text-base font-semibold">NovaView</span>
             </div>
-            <p className="text-sm text-fg-muted max-w-[36ch]">{t('footer.about')}</p>
+            <p
+              className="text-sm text-fg-muted max-w-[36ch]"
+              dangerouslySetInnerHTML={{ __html: t('footer.about') }}
+            />
           </div>
           <div>
             <h4 className="text-sm font-semibold mb-3">{t('footer.col.product')}</h4>

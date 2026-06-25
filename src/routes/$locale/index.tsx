@@ -4,7 +4,7 @@ import { HeroMock } from '~/components/sections/HeroMock';
 import { StatStrip } from '~/components/sections/StatStrip';
 import { SurfaceCard } from '~/components/sections/SurfaceCard';
 import { SectionHead } from '~/components/sections/SectionHead';
-import { isUrlLocale, urlLocaleToLocale, type Locale } from '~/i18n/locales';
+import { isUrlLocale, localeToUrlLocale, urlLocaleToLocale, type Locale } from '~/i18n/locales';
 import { useT } from '~/i18n/useT';
 import { buildMeta } from '~/lib/seo';
 
@@ -27,7 +27,7 @@ function IndexPage() {
 
 function IndexContent({ locale }: { locale: Locale }) {
   const t = useT();
-  const base = `/${locale}`;
+  const base = `/${localeToUrlLocale(locale)}`;
   return (
     <>
       <Hero

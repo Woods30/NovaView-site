@@ -17,3 +17,14 @@ export function isUrlLocale(value: unknown): value is UrlLocale {
 export function urlLocaleToLocale(value: UrlLocale): Locale {
   return value === 'zh' ? 'zh-CN' : value;
 }
+
+/**
+ * Map an internal `Locale` (e.g. 'zh-CN') to its URL form (e.g. 'zh').
+ *
+ * Use this whenever building hrefs to in-app routes so the link matches
+ * the `$locale` path segment registered in the router (which only
+ * accepts `zh` or `en`).
+ */
+export function localeToUrlLocale(locale: Locale): UrlLocale {
+  return locale === 'zh-CN' ? 'zh' : 'en';
+}

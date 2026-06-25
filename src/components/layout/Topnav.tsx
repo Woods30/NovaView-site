@@ -5,7 +5,7 @@ import { LangSwitch } from './LangSwitch';
 import { ThemeToggle } from './ThemeToggle';
 import { Logo } from '~/components/brand/Logo';
 import { useT } from '~/i18n/useT';
-import type { Locale } from '~/i18n/locales';
+import { localeToUrlLocale, type Locale } from '~/i18n/locales';
 import { Button } from '~/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '~/components/ui/sheet';
 
@@ -15,11 +15,12 @@ interface TopnavProps {
 
 export function Topnav({ locale }: TopnavProps) {
   const t = useT();
+  const urlLocale = localeToUrlLocale(locale);
   const navLinks = [
-    { href: `/${locale}/landing#formats`, key: 'nav.formats' },
-    { href: `/${locale}/landing#privacy`, key: 'nav.privacy' },
-    { href: `/${locale}/landing#features`, key: 'nav.features' },
-    { href: `/${locale}/landing#workflow`, key: 'nav.workflow' },
+    { href: `/${urlLocale}/landing#formats`, key: 'nav.formats' },
+    { href: `/${urlLocale}/landing#privacy`, key: 'nav.privacy' },
+    { href: `/${urlLocale}/landing#features`, key: 'nav.features' },
+    { href: `/${urlLocale}/landing#workflow`, key: 'nav.workflow' },
     { href: 'https://github.com/Woods30/NovaView', key: 'nav.github', external: true },
   ];
 
@@ -28,7 +29,7 @@ export function Topnav({ locale }: TopnavProps) {
       <Container className="flex h-14 items-center justify-between gap-4">
         <Link
           to={'/$locale' as never}
-          params={{ locale } as never}
+          params={{ locale: urlLocale } as never}
           className="flex items-center gap-2.5 text-fg font-semibold"
         >
           <Logo size="sm" alt={t('brand.logo_alt')} />
@@ -63,7 +64,7 @@ export function Topnav({ locale }: TopnavProps) {
             variant="secondary"
             className="hidden sm:inline-flex"
           >
-            <a href={`/${locale}/landing#download`}>{t('nav.download')}</a>
+            <a href={`/${urlLocale}/landing#download`}>{t('nav.download')}</a>
           </Button>
           <Sheet>
             <SheetTrigger className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-border">
@@ -82,7 +83,7 @@ export function Topnav({ locale }: TopnavProps) {
                   </a>
                 ))}
                 <a
-                  href={`/${locale}/landing#download`}
+                  href={`/${urlLocale}/landing#download`}
                   className="text-accent font-medium"
                 >
                   {t('nav.download')}

@@ -11,7 +11,7 @@ import { PrivacySpotlight } from '~/components/sections/PrivacySpotlight';
 import { SectionHead } from '~/components/sections/SectionHead';
 import { UseCaseCard } from '~/components/sections/UseCaseCard';
 import { WorkflowStrip } from '~/components/sections/WorkflowStrip';
-import { isUrlLocale, urlLocaleToLocale, type Locale } from '~/i18n/locales';
+import { isUrlLocale, localeToUrlLocale, urlLocaleToLocale, type Locale } from '~/i18n/locales';
 import { useT } from '~/i18n/useT';
 import { buildMeta } from '~/lib/seo';
 
@@ -111,7 +111,7 @@ function LandingContent({ locale }: { locale: Locale }) {
           { key: t('flow.r6.k'), value: t('flow.r6.v'), tag: t('flow.r6.t'), tagKind: 'no' },
           { key: t('flow.r7.k'), value: t('flow.r7.v'), tag: t('flow.r7.t'), tagKind: 'no' },
         ]}
-        moreHref={`/${locale}/privacy`}
+        moreHref={`/${localeToUrlLocale(locale)}/privacy`}
         moreLabel={t('privacy.more')}
       />
 

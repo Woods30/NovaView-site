@@ -1,4 +1,4 @@
-import type { Locale } from '~/i18n/locales';
+import { localeToUrlLocale, type Locale } from '~/i18n/locales';
 
 const SITE = 'https://novaview.app';
 
@@ -43,7 +43,7 @@ const META: Record<string, Record<Locale, { title: string; description: string }
 
 export function buildMeta(page: keyof typeof META, locale: Locale) {
   const m = META[page][locale];
-  const url = `${SITE}/${locale}${page === 'index' ? '' : '/' + page}`;
+  const url = `${SITE}/${localeToUrlLocale(locale)}${page === 'index' ? '' : '/' + page}`;
   const ogLocale = locale === 'zh-CN' ? 'zh_CN' : 'en_US';
   return {
     title: m.title,
@@ -54,7 +54,7 @@ export function buildMeta(page: keyof typeof META, locale: Locale) {
       { property: 'og:type', content: page === 'privacy' ? 'article' : 'website' },
       { property: 'og:url', content: url },
       { property: 'og:locale', content: ogLocale },
-      { property: 'og:image', content: `${SITE}/brand/og-${locale}.png` },
+      { property: 'og:image', content: `${SITE}/brand/og-${localeToUrlLocale(locale)}.png` },
       { name: 'twitter:card', content: 'summary_large_image' },
     ],
     links: [{ rel: 'canonical', href: url }],

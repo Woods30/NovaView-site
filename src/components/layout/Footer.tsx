@@ -1,11 +1,11 @@
 import { Container } from './Container';
 import { Logo } from '~/components/brand/Logo';
 import { useT } from '~/i18n/useT';
-import type { Locale } from '~/i18n/locales';
+import { localeToUrlLocale, type Locale } from '~/i18n/locales';
 
 export function Footer({ locale }: { locale: Locale }) {
   const t = useT();
-  const base = `/${locale}`;
+  const base = `/${localeToUrlLocale(locale)}`;
   const productLinks = [
     { href: `${base}/landing#formats`, key: 'footer.l.formats' },
     { href: `${base}/landing#features`, key: 'footer.l.features' },

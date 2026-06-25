@@ -14,14 +14,14 @@ export function HeroMock() {
         <div className="pt-3.5 grid gap-2.5 font-mono text-[12.5px] leading-relaxed">
           <div><span className="font-semibold">{t('mock.h1')}</span></div>
           <div className="text-fg-muted">{t('mock.cm')}</div>
-          <div className="text-orange-700">{t('mock.h2')}</div>
+          <div className="text-orange-600">{t('mock.h2')}</div>
           <div dangerouslySetInnerHTML={{ __html: t('mock.l1') }} />
           <div dangerouslySetInnerHTML={{ __html: t('mock.l2') }} />
           <div dangerouslySetInnerHTML={{ __html: t('mock.l3') }} />
-          <div className="text-orange-700">{t('mock.h3')}</div>
-          <div>· {t('mock.s1l')} <span className="text-blue-700">0.6s</span></div>
-          <div>· {t('mock.s2l')} <span className="text-blue-700">100%</span></div>
-          <div>· {t('mock.s3l')} <span className="text-blue-700">✓</span></div>
+          <div className="text-orange-600">{t('mock.h3')}</div>
+          <div>· {t('mock.s1l')} <span className="text-blue-600">0.6s</span></div>
+          <div>· {t('mock.s2l')} <span className="text-blue-600">100%</span></div>
+          <div>· {t('mock.s3l')} <span className="text-blue-600">✓</span></div>
         </div>
       </div>
       <div className="absolute -right-4 -bottom-5 bg-fg text-bg rounded-md px-4 py-3.5 flex items-center gap-3 text-[13px] shadow-lg">

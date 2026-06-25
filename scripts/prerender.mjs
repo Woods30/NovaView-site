@@ -34,20 +34,6 @@ const SITE = 'https://novaview.app';
 const META = {
   index: {
     'zh-CN': {
-      title: 'NovaView · 本地优先 极速阅读',
-      description:
-        '手机上阅读 AI 生成文档的最佳方式。Markdown / HTML / JSON / YAML / TXT / CSV 全部支持，开源透明。',
-      ogType: 'website',
-    },
-    en: {
-      title: 'NovaView · Local-first Lightning Fast',
-      description:
-        'The best way to read AI-generated documents on mobile. Markdown, HTML, JSON, YAML, TXT, CSV — all supported, fully open source.',
-      ogType: 'website',
-    },
-  },
-  landing: {
-    'zh-CN': {
       title: 'NovaView · 手机上阅读 AI 文档的最佳方式',
       description:
         '本地优先、轻量、秒级打开。Markdown、HTML、JSON、YAML、TXT、CSV 一气呵成 — 文件不离开设备，开源透明。',
@@ -83,10 +69,8 @@ const META = {
 /** @type {RouteSpec[]} */
 const ROUTE_SPECS = [
   { path: '/zh/', page: 'index', locale: 'zh-CN', htmlLang: 'zh-CN', ogLocale: 'zh_CN' },
-  { path: '/zh/landing', page: 'landing', locale: 'zh-CN', htmlLang: 'zh-CN', ogLocale: 'zh_CN' },
   { path: '/zh/privacy', page: 'privacy', locale: 'zh-CN', htmlLang: 'zh-CN', ogLocale: 'zh_CN' },
   { path: '/en/', page: 'index', locale: 'en', htmlLang: 'en', ogLocale: 'en_US' },
-  { path: '/en/landing', page: 'landing', locale: 'en', htmlLang: 'en', ogLocale: 'en_US' },
   { path: '/en/privacy', page: 'privacy', locale: 'en', htmlLang: 'en', ogLocale: 'en_US' },
 ];
 

@@ -8,14 +8,14 @@ describe('buildMeta', () => {
     expect(m.meta.find((x) => x.property === 'og:locale')?.content).toBe('zh_CN');
   });
 
-  it('en → lang en + canonical 含 /en/', () => {
-    const m = buildMeta('landing', 'en');
+  it('en → lang en + canonical 含 /en', () => {
+    const m = buildMeta('index', 'en');
     expect(m.htmlAttrs?.lang).toBe('en');
-    expect(m.links?.[0]?.href).toBe('https://novaview.app/en/landing');
+    expect(m.links?.[0]?.href).toBe('https://novaview.app/en');
   });
 
   it('privacy 页 og:type=article，其他=website', () => {
     expect(buildMeta('privacy', 'en').meta.find((x) => x.property === 'og:type')?.content).toBe('article');
-    expect(buildMeta('landing', 'en').meta.find((x) => x.property === 'og:type')?.content).toBe('website');
+    expect(buildMeta('index', 'en').meta.find((x) => x.property === 'og:type')?.content).toBe('website');
   });
 });

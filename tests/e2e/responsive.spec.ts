@@ -6,10 +6,8 @@ import { expect, test } from '@playwright/test';
  */
 const PAGES = [
   { locale: 'zh', page: '/' },
-  { locale: 'zh', page: '/landing' },
   { locale: 'zh', page: '/privacy' },
   { locale: 'en', page: '/' },
-  { locale: 'en', page: '/landing' },
   { locale: 'en', page: '/privacy' },
 ];
 

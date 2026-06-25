@@ -2,9 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url><loc>https://novaview.app/zh/</loc><xhtml:link rel="alternate" hreflang="en" href="https://novaview.app/en/"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://novaview.app/zh/"/></url>
-  <url><loc>https://novaview.app/zh/landing</loc><xhtml:link rel="alternate" hreflang="en" href="https://novaview.app/en/landing"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://novaview.app/zh/landing"/></url>
   <url><loc>https://novaview.app/zh/privacy</loc><xhtml:link rel="alternate" hreflang="en" href="https://novaview.app/en/privacy"/><xhtml:link rel="alternate" hreflang="zh-CN" href="https://novaview.app/zh/privacy"/></url>
   <url><loc>https://novaview.app/en/</loc><xhtml:link rel="alternate" hreflang="zh-CN" href="https://novaview.app/zh/"/><xhtml:link rel="alternate" hreflang="en" href="https://novaview.app/en/"/></url>
-  <url><loc>https://novaview.app/en/landing</loc><xhtml:link rel="alternate" hreflang="zh-CN" href="https://novaview.app/zh/landing"/><xhtml:link rel="alternate" hreflang="en" href="https://novaview.app/en/landing"/></url>
   <url><loc>https://novaview.app/en/privacy</loc><xhtml:link rel="alternate" hreflang="zh-CN" href="https://novaview.app/zh/privacy"/><xhtml:link rel="alternate" hreflang="en" href="https://novaview.app/en/privacy"/></url>
 </urlset>

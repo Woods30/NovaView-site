@@ -8,10 +8,10 @@ export function Footer({ locale }: { locale: Locale }) {
   const t = useT();
   const base = `/${localeToUrlLocale(locale)}`;
   const productLinks: { href: string; key: DictionaryKey }[] = [
-    { href: `${base}/landing#formats`, key: 'footer.l.formats' },
-    { href: `${base}/landing#features`, key: 'footer.l.features' },
-    { href: `${base}/landing#workflow`, key: 'footer.l.workflow' },
-    { href: `${base}/landing#download`, key: 'footer.l.download' },
+    { href: `${base}/#formats`, key: 'footer.l.formats' },
+    { href: `${base}/#features`, key: 'footer.l.features' },
+    { href: `${base}/#workflow`, key: 'footer.l.workflow' },
+    { href: `${base}/#download`, key: 'footer.l.download' },
   ];
   const legalLinks: { href: string; key: DictionaryKey }[] = [
     { href: `${base}/privacy`, key: 'footer.l.privacy' },
@@ -88,7 +88,7 @@ export function Footer({ locale }: { locale: Locale }) {
         </div>
         <div className="mt-10 pt-6 border-t border-border flex flex-col md:flex-row items-start md:items-center justify-between gap-2 text-xs text-fg-muted font-mono">
           <span>© 2026 NovaView. All rights reserved.</span>
-          <span>landing · v1.4.2 · 2026-06</span>
+          <span>index · v1.4.2 · 2026-06</span>
         </div>
       </Container>
     </footer>

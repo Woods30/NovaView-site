@@ -18,10 +18,10 @@ export function Topnav({ locale }: TopnavProps) {
   const t = useT();
   const urlLocale = localeToUrlLocale(locale);
   const navLinks: { href: string; key: DictionaryKey; external?: boolean }[] = [
-    { href: `/${urlLocale}/landing#formats`, key: 'nav.formats' },
-    { href: `/${urlLocale}/landing#privacy`, key: 'nav.privacy' },
-    { href: `/${urlLocale}/landing#features`, key: 'nav.features' },
-    { href: `/${urlLocale}/landing#workflow`, key: 'nav.workflow' },
+    { href: `/${urlLocale}/#formats`, key: 'nav.formats' },
+    { href: `/${urlLocale}/#privacy`, key: 'nav.privacy' },
+    { href: `/${urlLocale}/#features`, key: 'nav.features' },
+    { href: `/${urlLocale}/#workflow`, key: 'nav.workflow' },
     { href: 'https://github.com/Woods30/NovaView', key: 'nav.github', external: true },
   ];
 
@@ -65,7 +65,7 @@ export function Topnav({ locale }: TopnavProps) {
             variant="secondary"
             className="hidden sm:inline-flex"
           >
-            <a href={`/${urlLocale}/landing#download`}>{t('nav.download')}</a>
+            <a href={`/${urlLocale}/#download`}>{t('nav.download')}</a>
           </Button>
           <Sheet>
             <SheetTrigger aria-label="Open menu" className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-border">
@@ -84,7 +84,7 @@ export function Topnav({ locale }: TopnavProps) {
                   </a>
                 ))}
                 <a
-                  href={`/${urlLocale}/landing#download`}
+                  href={`/${urlLocale}/#download`}
                   className="text-accent font-medium"
                 >
                   {t('nav.download')}

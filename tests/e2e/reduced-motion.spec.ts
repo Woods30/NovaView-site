@@ -9,7 +9,7 @@ test.describe('reduced-motion', () => {
     const context = await browser.newContext({ reducedMotion: 'reduce' });
     const page = await context.newPage();
     try {
-      await page.goto('/zh/landing');
+      await page.goto('/zh/');
       await expect(page.locator('h1').first()).toBeVisible();
 
       // Sanity-check: the root `<html>` element should be reachable and have

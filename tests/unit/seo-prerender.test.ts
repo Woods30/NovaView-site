@@ -24,7 +24,7 @@ import { resolve } from 'path';
 const PRERENDER_PATH = resolve(process.cwd(), 'scripts/prerender.mjs');
 const prerenderSrc = readFileSync(PRERENDER_PATH, 'utf8');
 
-const pages = ['index', 'landing', 'privacy'] as const;
+const pages = ['index', 'privacy'] as const;
 const locales = ['zh-CN', 'en'] as const;
 
 describe('SEO / prerender 一致性', () => {

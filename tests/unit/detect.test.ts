@@ -3,7 +3,7 @@ import { detectLocale } from '~/i18n/detect';
 
 describe('detectLocale', () => {
   it('URL 第一段是合法 locale → 用之', () => {
-    expect(detectLocale({ pathname: '/en/landing', storage: null, navigatorLang: 'zh-CN' })).toBe('en');
+    expect(detectLocale({ pathname: '/en/', storage: null, navigatorLang: 'zh-CN' })).toBe('en');
     expect(detectLocale({ pathname: '/zh/', storage: null, navigatorLang: 'en' })).toBe('zh-CN');
   });
 

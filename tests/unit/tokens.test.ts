@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest';
  * using a CSS variable, which would defeat the whole token system.
  *
  * The regex uses lookarounds rather than `\b` so anchor fragments like
- * `/landing#features` are NOT reported. `f`, `e`, `a` are hex digits but
+ * `/#features` are NOT reported. `f`, `e`, `a` are hex digits but
  * the next character `t` is a word char, so the negative lookahead at the
  * trailing edge correctly rejects it.
  *

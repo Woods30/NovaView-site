@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('下载链接 href 正确', async ({ page }) => {
-  await page.goto('/zh/landing#download');
+  await page.goto('/zh/#download');
   const iosHref = await page.locator('a:has-text("App Store 下载")').first().getAttribute('href');
   expect(iosHref).toContain('apps.apple.com/app/novaview');
 

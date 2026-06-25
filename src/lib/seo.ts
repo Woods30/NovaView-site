@@ -5,18 +5,6 @@ const SITE = 'https://novaview.app';
 const META: Record<string, Record<Locale, { title: string; description: string }>> = {
   index: {
     'zh-CN': {
-      title: 'NovaView · 本地优先 极速阅读',
-      description:
-        '手机上阅读 AI 生成文档的最佳方式。Markdown / HTML / JSON / YAML / TXT / CSV 全部支持，开源透明。',
-    },
-    en: {
-      title: 'NovaView · Local-first Lightning Fast',
-      description:
-        'The best way to read AI-generated documents on mobile. Markdown, HTML, JSON, YAML, TXT, CSV — all supported, fully open source.',
-    },
-  },
-  landing: {
-    'zh-CN': {
       title: 'NovaView · 手机上阅读 AI 文档的最佳方式',
       description:
         '本地优先、轻量、秒级打开。Markdown、HTML、JSON、YAML、TXT、CSV 一气呵成 — 文件不离开设备，开源透明。',

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Container } from '~/components/layout/Container';
 import { Button } from '~/components/ui/button';
 
-interface HeroProps {
+export interface HeroProps {
   eyebrow?: string;
   headline: string;
   sub: string;

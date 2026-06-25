@@ -4,9 +4,9 @@
   --color-fg: #111111;
   --color-fg-muted: #6b6b6b;
   --color-border: #e5e5e5;
-  --color-accent: #2f6feb;
-  --color-accent-hover: color-mix(in oklab, #2f6feb, black 8%);
-  --color-accent-active: color-mix(in oklab, #2f6feb, black 14%);
+  --color-accent: #1f5fcc;
+  --color-accent-hover: color-mix(in oklab, #1f5fcc, black 8%);
+  --color-accent-active: color-mix(in oklab, #1f5fcc, black 14%);
   --color-success: #17a34a;
   --color-warn: #eab308;
   --color-danger: #dc2626;

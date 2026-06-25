@@ -68,7 +68,7 @@ export function Topnav({ locale }: TopnavProps) {
             <a href={`/${urlLocale}/landing#download`}>{t('nav.download')}</a>
           </Button>
           <Sheet>
-            <SheetTrigger className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-border">
+            <SheetTrigger aria-label="Open menu" className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-border">
               <Menu size={16} />
             </SheetTrigger>
             <SheetContent>

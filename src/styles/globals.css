@@ -57,6 +57,20 @@ a:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* Inline links inside long-form prose blocks (privacy policy body) must be
+   distinguishable from surrounding text without relying on color alone. */
+.prose-like a,
+.prose-like p a,
+.prose-like li a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+.prose-like a:hover,
+.prose-like p a:hover,
+.prose-like li a:hover {
+  text-decoration-thickness: 2px;
+}
 button {
   font-family: inherit;
   cursor: pointer;

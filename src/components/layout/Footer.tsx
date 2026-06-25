@@ -34,7 +34,7 @@ export function Footer({ locale }: { locale: Locale }) {
             />
           </div>
           <div>
-            <h4 className="text-sm font-semibold mb-3">{t('footer.col.product')}</h4>
+            <h2 className="text-sm font-semibold mb-3">{t('footer.col.product')}</h2>
             <ul className="space-y-2 text-sm">
               {productLinks.map((l) => (
                 <li key={l.href}>
@@ -46,7 +46,7 @@ export function Footer({ locale }: { locale: Locale }) {
             </ul>
           </div>
           <div>
-            <h4 className="text-sm font-semibold mb-3">{t('footer.col.legal')}</h4>
+            <h2 className="text-sm font-semibold mb-3">{t('footer.col.legal')}</h2>
             <ul className="space-y-2 text-sm">
               {legalLinks.map((l) => (
                 <li key={l.href}>
@@ -58,7 +58,7 @@ export function Footer({ locale }: { locale: Locale }) {
             </ul>
           </div>
           <div>
-            <h4 className="text-sm font-semibold mb-3">{t('footer.col.contact')}</h4>
+            <h2 className="text-sm font-semibold mb-3">{t('footer.col.contact')}</h2>
             <ul className="space-y-2 text-sm">
               <li>
                 <a

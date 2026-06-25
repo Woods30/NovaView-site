@@ -1,6 +1,7 @@
+import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { Hero } from '~/components/sections/Hero';
+import { Hero, type HeroProps } from '~/components/sections/Hero';
 
 /**
  * Hero takes all visible text via props (eyebrow, headline, sub, primaryCta,
@@ -8,19 +9,24 @@ import { Hero } from '~/components/sections/Hero';
  * surface with literal strings, no I18nProvider needed.
  */
 
-function renderHero(overrides: Partial<Parameters<typeof Hero>[0]> = {}) {
-  return render(
-    <Hero
-      eyebrow="v1 · local-first"
-      headline={'Read AI docs<br><span class="accent">on your phone</span>'}
-      sub="Markdown, HTML, JSON — all rendered locally."
-      primaryCta={{ label: 'Download', href: '#download' }}
-      secondaryCta={{ label: 'See workflow', href: '#workflow' }}
-      metaItems={['No ads', 'No tracking', 'Open source']}
-      mockSlot={<div data-testid="mock-slot">mock</div>}
-      {...overrides}
-    />,
-  );
+const FULL_PROPS: HeroProps = {
+  eyebrow: 'v1 · local-first',
+  headline: 'Read AI docs<br><span class="accent">on your phone</span>',
+  sub: 'Markdown, HTML, JSON — all rendered locally.',
+  primaryCta: { label: 'Download', href: '#download' },
+  secondaryCta: { label: 'See workflow', href: '#workflow' },
+  metaItems: ['No ads', 'No tracking', 'Open source'],
+  mockSlot: <div data-testid="mock-slot">mock</div>,
+};
+
+function renderHero(overrides: Partial<HeroProps> = {}) {
+  return render(<Hero {...FULL_PROPS} {...overrides} />);
+}
+
+/** Strip a key out of FULL_PROPS so we can render without it. */
+function without<K extends keyof HeroProps>(key: K, extra?: Partial<HeroProps>): Omit<HeroProps, K> {
+  const { [key]: _omitted, ...rest } = FULL_PROPS;
+  return { ...rest, ...extra };
 }
 
 describe('Hero', () => {
@@ -49,7 +55,7 @@ describe('Hero', () => {
   });
 
   it('omits secondary CTA when not provided', () => {
-    renderHero({ secondaryCta: undefined });
+    render(<Hero {...without('secondaryCta')} />);
     expect(screen.queryByRole('link', { name: 'See workflow' })).toBeNull();
   });
 
@@ -67,7 +73,11 @@ describe('Hero', () => {
   });
 
   it('omits mockSlot when not provided', () => {
-    renderHero({ mockSlot: undefined });
+    render(<Hero {...without('mockSlot')} />);
     expect(screen.queryByTestId('mock-slot')).toBeNull();
   });
 });
+
+// Suppress unused-import warning for ReactNode when no other reference exists.
+const _unused: ReactNode = null;
+void _unused;

@@ -3,6 +3,7 @@ import { Container } from '~/components/layout/Container';
 import { PrivacyToc } from '~/components/sections/PrivacyToc';
 import { isUrlLocale, urlLocaleToLocale, type Locale } from '~/i18n/locales';
 import { useT } from '~/i18n/useT';
+import type { DictionaryKey } from '~/i18n/types';
 import { buildMeta } from '~/lib/seo';
 
 export const Route = createFileRoute('/$locale/privacy')({
@@ -26,7 +27,7 @@ function PrivacyContent({ locale: _ }: { locale: Locale }) {
   const t = useT();
   const tocItems = Array.from({ length: 11 }, (_, i) => ({
     id: `priv.s${i + 1}`,
-    label: t(`priv.s${i + 1}.label` as `priv.s${number}.label`),
+    label: t(`priv.s${i + 1}.label` as DictionaryKey),
   }));
 
   return (
@@ -52,10 +53,10 @@ function PrivacyContent({ locale: _ }: { locale: Locale }) {
           const n = i + 1;
           return (
             <section key={n} id={`priv.s${n}`} className="scroll-mt-20 border-t border-border pt-8">
-              <h2 className="text-2xl font-semibold mb-3">{t(`priv.s${n}.label` as `priv.s${number}.label`)}</h2>
+              <h2 className="text-2xl font-semibold mb-3">{t(`priv.s${n}.label` as DictionaryKey)}</h2>
               <div
                 className="text-fg-muted leading-relaxed space-y-3 text-[15px]"
-                dangerouslySetInnerHTML={{ __html: t(`priv.s${n}.body` as `priv.s${number}.body`) }}
+                dangerouslySetInnerHTML={{ __html: t(`priv.s${n}.body` as DictionaryKey) }}
               />
             </section>
           );

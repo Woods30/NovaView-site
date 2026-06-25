@@ -2,17 +2,18 @@ import { Container } from './Container';
 import { Logo } from '~/components/brand/Logo';
 import { useT } from '~/i18n/useT';
 import { localeToUrlLocale, type Locale } from '~/i18n/locales';
+import type { DictionaryKey } from '~/i18n/types';
 
 export function Footer({ locale }: { locale: Locale }) {
   const t = useT();
   const base = `/${localeToUrlLocale(locale)}`;
-  const productLinks = [
+  const productLinks: { href: string; key: DictionaryKey }[] = [
     { href: `${base}/landing#formats`, key: 'footer.l.formats' },
     { href: `${base}/landing#features`, key: 'footer.l.features' },
     { href: `${base}/landing#workflow`, key: 'footer.l.workflow' },
     { href: `${base}/landing#download`, key: 'footer.l.download' },
   ];
-  const legalLinks = [
+  const legalLinks: { href: string; key: DictionaryKey }[] = [
     { href: `${base}/privacy`, key: 'footer.l.privacy' },
     { href: `${base}/privacy#data`, key: 'footer.l.data' },
     { href: `${base}/privacy#rights`, key: 'footer.l.rights' },

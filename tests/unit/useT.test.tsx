@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { I18nProvider } from '~/i18n/provider';
 import { useT } from '~/i18n/useT';
+import type { DictionaryKey } from '~/i18n/types';
 
 function Probe() {
   const t = useT();
@@ -30,7 +31,10 @@ describe('useT', () => {
   it('缺 key 时返回 key 本身', () => {
     function Bad() {
       const t = useT();
-      return <div>{t('nonexistent.key')}</div>;
+      // Cast through DictionaryKey — we intentionally call with an unknown
+      // key here to exercise the runtime "missing key" branch. The typed
+      // useT() should reject this at compile time, which is the point.
+      return <div>{t('nonexistent.key' as DictionaryKey)}</div>;
     }
     render(
       <I18nProvider locale="zh-CN">

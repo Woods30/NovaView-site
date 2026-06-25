@@ -6,6 +6,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { Logo } from '~/components/brand/Logo';
 import { useT } from '~/i18n/useT';
 import { localeToUrlLocale, type Locale } from '~/i18n/locales';
+import type { DictionaryKey } from '~/i18n/types';
 import { Button } from '~/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '~/components/ui/sheet';
 
@@ -16,7 +17,7 @@ interface TopnavProps {
 export function Topnav({ locale }: TopnavProps) {
   const t = useT();
   const urlLocale = localeToUrlLocale(locale);
-  const navLinks = [
+  const navLinks: { href: string; key: DictionaryKey; external?: boolean }[] = [
     { href: `/${urlLocale}/landing#formats`, key: 'nav.formats' },
     { href: `/${urlLocale}/landing#privacy`, key: 'nav.privacy' },
     { href: `/${urlLocale}/landing#features`, key: 'nav.features' },

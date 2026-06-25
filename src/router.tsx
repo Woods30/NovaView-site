@@ -1,4 +1,4 @@
-import { createRouter, createRoute, createRootRoute } from '@tanstack/react-router';
+import { createRouter, createRootRoute } from '@tanstack/react-router';
 
 const rootRoute = createRootRoute({
   component: () => <div className="p-8 text-fg">NovaView placeholder</div>,

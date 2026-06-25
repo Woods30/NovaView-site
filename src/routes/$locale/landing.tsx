@@ -11,15 +11,18 @@ import { PrivacySpotlight } from '~/components/sections/PrivacySpotlight';
 import { SectionHead } from '~/components/sections/SectionHead';
 import { UseCaseCard } from '~/components/sections/UseCaseCard';
 import { WorkflowStrip } from '~/components/sections/WorkflowStrip';
-import { isLocale, type Locale } from '~/i18n/locales';
+import { isUrlLocale, urlLocaleToLocale, type Locale } from '~/i18n/locales';
 import { useT } from '~/i18n/useT';
 import { buildMeta } from '~/lib/seo';
 
 export const Route = createFileRoute('/$locale/landing')({
   beforeLoad: ({ params }) => {
-    if (!isLocale(params.locale)) throw new Error('Invalid locale');
+    if (!isUrlLocale(params.locale)) throw new Error('Invalid locale');
   },
-  loader: ({ params }) => ({ locale: params.locale as Locale }),
+  loader: ({ params }) => {
+    const locale: Locale = urlLocaleToLocale(params.locale as 'zh' | 'en');
+    return { locale };
+  },
   head: ({ loaderData }) => buildMeta('landing', loaderData!.locale),
   component: LandingPage,
 });

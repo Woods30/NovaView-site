@@ -4,15 +4,18 @@ import { HeroMock } from '~/components/sections/HeroMock';
 import { StatStrip } from '~/components/sections/StatStrip';
 import { SurfaceCard } from '~/components/sections/SurfaceCard';
 import { SectionHead } from '~/components/sections/SectionHead';
-import { isLocale, type Locale } from '~/i18n/locales';
+import { isUrlLocale, urlLocaleToLocale, type Locale } from '~/i18n/locales';
 import { useT } from '~/i18n/useT';
 import { buildMeta } from '~/lib/seo';
 
 export const Route = createFileRoute('/$locale/')({
   beforeLoad: ({ params }) => {
-    if (!isLocale(params.locale)) throw new Error('Invalid locale');
+    if (!isUrlLocale(params.locale)) throw new Error('Invalid locale');
   },
-  loader: ({ params }) => ({ locale: params.locale as Locale }),
+  loader: ({ params }) => {
+    const locale: Locale = urlLocaleToLocale(params.locale as 'zh' | 'en');
+    return { locale };
+  },
   head: ({ loaderData }) => buildMeta('index', loaderData!.locale),
   component: IndexPage,
 });

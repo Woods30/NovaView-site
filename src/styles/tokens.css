@@ -1,0 +1,47 @@
+:root {
+  --color-bg: #fafafa;
+  --color-surface: #ffffff;
+  --color-fg: #111111;
+  --color-fg-muted: #6b6b6b;
+  --color-border: #e5e5e5;
+  --color-accent: #2f6feb;
+  --color-accent-hover: color-mix(in oklab, #2f6feb, black 8%);
+  --color-accent-active: color-mix(in oklab, #2f6feb, black 14%);
+  --color-success: #17a34a;
+  --color-warn: #eab308;
+  --color-danger: #dc2626;
+  --color-brand-blue: #60a5fa;
+  --color-brand-purple: #a78bfa;
+
+  --font-sans: 'Inter', -apple-system, system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: ui-monospace, 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+  --text-3xl: 48px;
+  --text-4xl: 64px;
+  --leading-body: 1.55;
+  --leading-tight: 1.15;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  --container-max: 1200px;
+}
+
+.dark {
+  --color-bg: #0a0a0a;
+  --color-surface: #141414;
+  --color-fg: #f5f5f5;
+  --color-fg-muted: #a3a3a3;
+  --color-border: #262626;
+  --color-accent: #4d8cff;
+  --color-accent-hover: color-mix(in oklab, #4d8cff, white 8%);
+  --color-accent-active: color-mix(in oklab, #4d8cff, white 14%);
+}

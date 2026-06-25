@@ -14,7 +14,7 @@ export function Logo({ size = 'sm', alt, className }: LogoProps) {
   return (
     <picture>
       <source
-        srcSet={px === 32 ? '/brand/logo-32.png' : '/brand/logo-60.png'}
+        srcSet={px === 32 ? '/brand/logo-32.png' : '/brand/logo-180.png'}
         media="(max-width: 768px)"
       />
       <img
@@ -23,7 +23,7 @@ export function Logo({ size = 'sm', alt, className }: LogoProps) {
             ? '/brand/logo-32.png'
             : size === 'md'
               ? '/brand/logo-60.png'
-              : '/brand/logo.png'
+              : '/brand/logo-180.png'
         }
         alt={alt}
         width={px}

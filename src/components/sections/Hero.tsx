@@ -19,9 +19,10 @@ export function Hero({ eyebrow, headline, sub, primaryCta, secondaryCta, metaIte
         <div className="grid lg:grid-cols-[1.05fr_1fr] gap-12 lg:gap-16 items-center">
           <div>
             {eyebrow && <span className="font-mono text-xs uppercase tracking-widest text-fg-muted font-medium">{eyebrow}</span>}
-            <h1 className="text-4xl lg:text-6xl font-semibold leading-tight tracking-tight mt-4">
-              {headline}
-            </h1>
+            <h1
+              className="text-4xl lg:text-6xl font-semibold leading-tight tracking-tight mt-4"
+              dangerouslySetInnerHTML={{ __html: headline }}
+            />
             <p className="text-base lg:text-lg text-fg-muted leading-relaxed mt-5 max-w-[50ch]">{sub}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button asChild size="lg">
@@ -38,7 +39,7 @@ export function Hero({ eyebrow, headline, sub, primaryCta, secondaryCta, metaIte
                 {metaItems.map((m, i) => (
                   <span key={m} className="flex items-center gap-4">
                     {i > 0 && <span className="w-1 h-1 rounded-full bg-border" />}
-                    {m}
+                    <span dangerouslySetInnerHTML={{ __html: m }} />
                   </span>
                 ))}
               </div>

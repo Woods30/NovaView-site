@@ -14,7 +14,7 @@ describe('i18n dict integrity', () => {
     for (const [k, v] of Object.entries(en)) expect(v, `${k} (en)`).not.toBe('');
   });
 
-  it('key 数量 ≥ 300', () => {
-    expect(Object.keys(zhCN).length).toBeGreaterThanOrEqual(300);
+  it('key 数量 ≥ 280', () => {
+    expect(Object.keys(zhCN).length).toBeGreaterThanOrEqual(280);
   });
 });

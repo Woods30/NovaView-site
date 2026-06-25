@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LocaleIndexRouteImport } from './routes/$locale/index'
+import { Route as LocalePrivacyRouteImport } from './routes/$locale/privacy'
 import { Route as LocaleLandingRouteImport } from './routes/$locale/landing'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const LocaleIndexRoute = LocaleIndexRouteImport.update({
   path: '/$locale/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LocalePrivacyRoute = LocalePrivacyRouteImport.update({
+  id: '/$locale/privacy',
+  path: '/$locale/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LocaleLandingRoute = LocaleLandingRouteImport.update({
   id: '/$locale/landing',
   path: '/$locale/landing',
@@ -32,30 +38,34 @@ const LocaleLandingRoute = LocaleLandingRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$locale/landing': typeof LocaleLandingRoute
+  '/$locale/privacy': typeof LocalePrivacyRoute
   '/$locale/': typeof LocaleIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$locale/landing': typeof LocaleLandingRoute
+  '/$locale/privacy': typeof LocalePrivacyRoute
   '/$locale': typeof LocaleIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$locale/landing': typeof LocaleLandingRoute
+  '/$locale/privacy': typeof LocalePrivacyRoute
   '/$locale/': typeof LocaleIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$locale/landing' | '/$locale/'
+  fullPaths: '/' | '/$locale/landing' | '/$locale/privacy' | '/$locale/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$locale/landing' | '/$locale'
-  id: '__root__' | '/' | '/$locale/landing' | '/$locale/'
+  to: '/' | '/$locale/landing' | '/$locale/privacy' | '/$locale'
+  id: '__root__' | '/' | '/$locale/landing' | '/$locale/privacy' | '/$locale/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LocaleLandingRoute: typeof LocaleLandingRoute
+  LocalePrivacyRoute: typeof LocalePrivacyRoute
   LocaleIndexRoute: typeof LocaleIndexRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocaleIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$locale/privacy': {
+      id: '/$locale/privacy'
+      path: '/$locale/privacy'
+      fullPath: '/$locale/privacy'
+      preLoaderRoute: typeof LocalePrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/$locale/landing': {
       id: '/$locale/landing'
       path: '/$locale/landing'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LocaleLandingRoute: LocaleLandingRoute,
+  LocalePrivacyRoute: LocalePrivacyRoute,
   LocaleIndexRoute: LocaleIndexRoute,
 }
 export const routeTree = rootRouteImport

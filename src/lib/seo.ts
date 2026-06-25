@@ -47,7 +47,12 @@ export function buildMeta(page: keyof typeof META, locale: Locale) {
   const ogLocale = locale === 'zh-CN' ? 'zh_CN' : 'en_US';
   return {
     title: m.title,
+    // TanStack Router's head() returns a meta array (NOT a separate title
+    // field). The runtime `<HeadContent />` extracts `<title>` from any
+    // meta descriptor with a `title` key. Keep `title` at the top level
+    // too for back-compat with anything that introspects the result.
     meta: [
+      { title: m.title },
       { name: 'description', content: m.description },
       { property: 'og:title', content: m.title },
       { property: 'og:description', content: m.description },

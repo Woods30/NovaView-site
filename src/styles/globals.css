@@ -15,6 +15,7 @@
   --color-danger: var(--color-danger);
   --color-brand-blue: var(--color-brand-blue);
   --color-brand-purple: var(--color-brand-purple);
+  --color-brand-navy: var(--color-brand-navy);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
@@ -23,6 +24,24 @@
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
   --radius-pill: var(--radius-pill);
+}
+
+/* —— 品牌渐变 utilities —— */
+.bg-brand-gradient { background-image: var(--gradient-brand); }
+.text-brand-gradient {
+  background-image: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.bg-brand-radial { background-image: var(--gradient-brand-radial); }
+
+/* —— Accent gradient text（hero 高亮词） —— */
+.accent {
+  background: linear-gradient(90deg, var(--color-brand-blue), var(--color-brand-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 * {

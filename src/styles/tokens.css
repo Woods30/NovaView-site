@@ -1,21 +1,30 @@
 :root {
-  --color-bg: #fafafa;
-  --color-surface: #ffffff;
-  --color-fg: #111111;
-  --color-fg-muted: #6b6b6b;
-  --color-border: #e5e5e5;
-  --color-accent: #1f5fcc;
-  --color-accent-hover: color-mix(in oklab, #1f5fcc, black 8%);
-  --color-accent-active: color-mix(in oklab, #1f5fcc, black 14%);
-  --color-success: #17a34a;
-  --color-warn: #eab308;
-  --color-danger: #dc2626;
-  --color-brand-blue: #60a5fa;
-  --color-brand-purple: #a78bfa;
+  /* —— 色板（Light mode · cool slate · 简洁） —— */
+  --color-bg: #F8F9FB;            /* cool near-white (was #fafafa warm) */
+  --color-surface: #FFFFFF;
+  --color-fg: #0B1220;            /* deep slate-900, cool tint */
+  --color-fg-muted: #64748B;      /* slate-500 */
+  --color-border: #E2E8F0;        /* slate-200 */
+  --color-accent: #2F6FEB;        /* cobalt — unchanged, already brand-aligned */
+  --color-accent-hover: color-mix(in oklab, #2f6feb, black 8%);
+  --color-accent-active: color-mix(in oklab, #2f6feb, black 14%);
+  --color-success: #10B981;       /* emerald-500 */
+  --color-warn: #F59E0B;          /* amber-500 */
+  --color-danger: #EF4444;        /* red-500 */
+  --color-brand-blue: #60A5FA;    /* LOGO cyan */
+  --color-brand-purple: #A78BFA;  /* LOGO purple */
+  --color-brand-navy: #0F1B3D;    /* LOGO bg */
 
+  /* —— 品牌渐变（用于 hero 高亮 + 装饰） —— */
+  --gradient-brand: linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%);
+  --gradient-brand-soft: linear-gradient(135deg, #60A5FA20 0%, #A78BFA20 100%);
+  --gradient-brand-radial: radial-gradient(ellipse at center, #A78BFA18 0%, transparent 70%);
+
+  /* —— 字体 —— */
   --font-sans: 'Inter', -apple-system, system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --font-mono: ui-monospace, 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
 
+  /* —— 字号 —— */
   --text-xs: 12px;
   --text-sm: 14px;
   --text-base: 16px;
@@ -27,21 +36,25 @@
   --leading-body: 1.55;
   --leading-tight: 1.15;
 
+  /* —— 间距 / 圆角 / 容器 —— */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-pill: 9999px;
-
   --container-max: 1200px;
 }
 
 .dark {
-  --color-bg: #0a0a0a;
-  --color-surface: #141414;
-  --color-fg: #f5f5f5;
-  --color-fg-muted: #a3a3a3;
-  --color-border: #262626;
-  --color-accent: #4d8cff;
-  --color-accent-hover: color-mix(in oklab, #4d8cff, white 8%);
-  --color-accent-active: color-mix(in oklab, #4d8cff, white 14%);
+  /* —— Dark mode · 深海军蓝（与 LOGO 背景对齐） —— */
+  --color-bg: #0B1220;            /* deep navy, close to logo bg */
+  --color-surface: #131C2E;       /* navy surface, slightly lighter */
+  --color-fg: #F1F5F9;            /* slate-100 */
+  --color-fg-muted: #94A3B8;      /* slate-400 */
+  --color-border: #1E293B;        /* slate-800 */
+  --color-accent: #7B9CFF;        /* brighter cobalt for dark */
+  --color-accent-hover: color-mix(in oklab, #7B9CFF, white 10%);
+  --color-accent-active: color-mix(in oklab, #7B9CFF, white 20%);
+  --color-success: #34D399;
+  --color-warn: #FBBF24;
+  --color-danger: #F87171;
 }

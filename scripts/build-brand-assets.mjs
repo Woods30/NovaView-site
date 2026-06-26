@@ -3,7 +3,12 @@ import { mkdir } from 'node:fs/promises';
 
 await mkdir('public/brand', { recursive: true });
 
-const src = 'public/brand/logo.png';
+// Always read from logo-source.png — the canonical raw LOGO asset.
+// Reading from logo.png would re-key an already-keyed image, where the
+// already-transparent (RGB 0,0,0) pixels fail the navy distance test
+// (dist 152 > 50) and get re-set to alpha 255, gradually losing
+// transparency on each script run.
+const src = 'public/brand/logo-source.png';
 
 // The original LOGO asset ships with a navy backdrop (#0F1B3D) baked into
 // every pixel. To produce truly transparent derivatives we must key out

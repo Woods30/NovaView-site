@@ -4,41 +4,69 @@
 >
 > iOS / Android app for reading Markdown, HTML, JSON, YAML, TXT and CSV files that ChatGPT, Claude and Codex generate.
 
-This repository hosts the **open-source marketing site** for NovaView, plus the **public release artifacts** for the iOS and Android apps. The app source itself lives in a separate private repository and is mirrored here as signed binaries on each release.
+This is the open-source project repository for NovaView. It contains:
+
+- the **marketing website** source (this repo, [`src/`](./src))
+- the **latest app builds** for iPhone, iPad, Android phones and tablets, published under [**Releases**](../../releases)
+
+The site is hosted at **[novaview.app](https://novaview.app)**. Every release on this repo ships signed `.ipa`, `.apk` and universal-APK builds ready to install on a real device — no App Store or Google Play round trip required.
 
 ---
 
-## Repository map
+## Why local-first
 
-NovaView is split across two repositories on purpose — the marketing site and the app runtime have different release cadences, threat models and licensing needs.
+When you ask ChatGPT for a Markdown report, Claude for an HTML dashboard, or Codex for a JSON diff, the file lands in your phone's share sheet. Most reader apps upload it to a cloud parser before showing it to you. NovaView doesn't. The file is parsed in a sandboxed in-app WebView, never leaves the device, and is wiped from the cache when you close it. No analytics, no accounts, no network calls unless a file format genuinely requires them.
 
-| Repo | Public? | Contents |
-|---|---|---|
-| **[Woods30/NovaView-site](https://github.com/Woods30/NovaView-site)** (this repo) | ✅ open source | Marketing site (3 pages × 2 locales), Playwright E2E tests, Lighthouse reports, signed app release artifacts under [Releases](../../releases) |
-| **[Woods30/NovaView](https://github.com/Woods30/NovaView)** | 🔒 private | iOS / Android app source — a closed-source runtime. New versions are published here as Releases |
+---
 
-The app's closed-source status lets us ship a fast native WebView-based reader without exposing the local rendering pipeline, sandbox policy and on-device parser. Everything user-facing *around* the app — the marketing site, the privacy policy, the public download links, the GitHub issue tracker — is in this repo and is open to contributions.
+## What's in this repo
 
-### Release flow
+| Path | Contents |
+|---|---|
+| [`src/`](./src) | Marketing site source — Vite + TanStack Start + React 19 + Tailwind v4 + shadcn/ui |
+| [`public/`](./public) | Static assets (LOGO derivatives, OG share cards, `sitemap.xml`, `robots.txt`) |
+| [`scripts/`](./scripts) | Brand asset regeneration + prerender driver |
+| [`tests/`](./tests) | Vitest unit specs + Playwright E2E specs |
+| [`docs/lighthouse/`](./docs/lighthouse) | Mobile Lighthouse baselines as regression snapshot |
+| [**Releases**](../../releases) | Signed iOS / Android / universal-APK builds, one entry per app version |
 
-When a new app version ships, the maintainer copies the signed iOS / Android / APK builds from `Woods30/NovaView` into a draft Release in this repo. The marketing site's download section then links to those release assets. The site itself does **not** rebuild on every app release — only the asset URLs change.
+The site is intentionally boring: 3 prerendered HTML files × 2 locales (zh / en) = 6 static pages, no client-side data fetching, no analytics, no third-party scripts.
 
+---
+
+## Quickstart
+
+The site runs on Node 20+ with pnpm 9.
+
+```bash
+pnpm install
+pnpm dev                  # http://localhost:3000
 ```
-Woods30/NovaView (private)                 Woods30/NovaView-site (this repo, public)
-─────────────────────                      ─────────────────────────────────
-   app v1.4.2 built + signed                  →  Release v1.4.2 published
-   App Store / Google Play / GitHub Releases     •  iOS .ipa
-                                            •  Android .apk
-                                            •  Universal APK
-                                            →  landing page download cards
-                                                automatically point to the new assets
+
+Hot-reloads routing, Tailwind and React. Locale switching works without a reload — try visiting `/zh/` and clicking the `EN` pill in the topnav.
+
+### Production build
+
+```bash
+pnpm build                # vite build + Playwright-driven prerender
+pnpm preview              # serves prerendered HTML on http://localhost:4173
 ```
+
+`pnpm build` writes 4 static HTML files to `dist/client/{zh,en}/.../index.html` plus shared `assets/` and `brand/` directories.
+
+### Installing the app
+
+Grab the latest build from [**Releases**](../../releases):
+
+- **iOS / iPadOS** — download the `.ipa` and install via AltStore, Sideloadly, or Xcode
+- **Android** — download the `.apk` (sideload) or the universal APK (works on phones, tablets and emulators)
+- **Play Store / App Store** — official channels are linked from the download section on the site
+
+Every release entry is signed and includes the SHA-256 hashes for each artifact.
 
 ---
 
 ## Tech stack
-
-The site is intentionally boring:
 
 - **Vite 5** + **TanStack Start** with file-based routing + static prerender
 - **React 19** + **TypeScript strict**
@@ -49,27 +77,49 @@ The site is intentionally boring:
 - **pnpm 9**
 - **Cloudflare Pages** for hosting
 
-Three prerendered HTML files per locale — `/zh/`, `/zh/privacy`, `/en/`, `/en/privacy`. No client-side data fetching, no analytics, no third-party scripts. Dark mode is a static `.dark` class swap on `<html>`; the inline script in `index.html` prevents a flash of wrong theme on first paint.
+Dark mode is a static `.dark` class swap on `<html>`. An inline script in `index.html` reads the saved preference and matches the user's OS choice on first paint, so there's no flash of the wrong theme.
 
 ---
 
-## Quickstart
+## Project layout
 
-```bash
-pnpm install
-pnpm dev                  # http://localhost:3000
 ```
-
-The dev server hot-reloads routing, Tailwind and React. Locale switching works without a reload — try visiting `/zh/` and clicking the `EN` pill in the topnav.
-
-### Production build
-
-```bash
-pnpm build                # vite build + Playwright-driven prerender
-pnpm preview              # serves prerendered HTML on http://localhost:4173
+NovaView-site/
+├── public/
+│   ├── brand/
+│   │   ├── logo.png            # single transparent LOGO source
+│   │   └── og-{zh,en}.png      # social share cards
+│   ├── favicon.png
+│   ├── sitemap.xml
+│   └── robots.txt
+├── src/
+│   ├── main.tsx
+│   ├── router.tsx
+│   ├── routes/
+│   │   ├── __root.tsx          # global layout (Topnav + Footer + Providers)
+│   │   ├── index.tsx           # / → redirect to /$locale/
+│   │   └── $locale/
+│   │       ├── index.tsx       # the marketing page
+│   │       └── privacy.tsx
+│   ├── components/
+│   │   ├── ui/                 # shadcn primitives
+│   │   ├── layout/             # Topnav, Footer, LangSwitch, ThemeToggle, Container
+│   │   ├── brand/              # Logo
+│   │   └── sections/           # Hero, FormatCard, PrivacySpotlight, WorkflowStrip, …
+│   ├── i18n/                   # zh-CN.json, en.json + provider/useT/detect
+│   ├── styles/
+│   │   ├── tokens.css          # design tokens (colors, fonts, radii)
+│   │   └── globals.css         # @theme inline + @layer base resets
+│   └── lib/                    # cn, seo
+├── scripts/
+│   ├── build-brand-assets.mjs  # generates logo.png + favicon.png + OG cards
+│   └── prerender.mjs           # Playwright prerender for SSG output
+├── tests/
+│   ├── unit/                   # Vitest specs (54)
+│   └── e2e/                    # Playwright specs (6)
+└── docs/
+    └── lighthouse/             # mobile Lighthouse baselines
 ```
-
-`pnpm build` writes 4 static HTML files to `dist/client/{zh,en}/.../index.html` plus the shared `assets/` and `brand/` directories.
 
 ---
 
@@ -117,48 +167,6 @@ done
 
 ---
 
-## Project layout
-
-```
-NovaView-site/
-├── public/
-│   ├── brand/
-│   │   ├── logo.png            # single transparent LOGO source
-│   │   └── og-{zh,en}.png      # social share cards
-│   ├── favicon.png
-│   ├── sitemap.xml
-│   └── robots.txt
-├── src/
-│   ├── main.tsx
-│   ├── router.tsx
-│   ├── routes/
-│   │   ├── __root.tsx          # global layout (Topnav + Footer + Providers)
-│   │   ├── index.tsx           # / → redirect to /$locale/
-│   │   └── $locale/
-│   │       ├── index.tsx       # the marketing page
-│   │       └── privacy.tsx
-│   ├── components/
-│   │   ├── ui/                 # shadcn primitives
-│   │   ├── layout/             # Topnav, Footer, LangSwitch, ThemeToggle, Container
-│   │   ├── brand/              # Logo
-│   │   └── sections/           # Hero, FormatCard, PrivacySpotlight, WorkflowStrip, …
-│   ├── i18n/                   # zh-CN.json, en.json + provider/useT/detect
-│   ├── styles/
-│   │   ├── tokens.css          # design tokens (colors, fonts, radii)
-│   │   └── globals.css         # @theme inline + @layer base resets
-│   └── lib/                    # cn, seo
-├── scripts/
-│   ├── build-brand-assets.mjs  # generates logo.png + favicon.png + OG cards
-│   └── prerender.mjs           # Playwright prerender for SSG output
-├── tests/
-│   ├── unit/                   # Vitest specs (54)
-│   └── e2e/                    # Playwright specs (6)
-└── docs/
-    └── lighthouse/             # mobile Lighthouse baselines
-```
-
----
-
 ## Brand assets
 
 The single source for the LOGO is `public/brand/logo-source.png`. To regenerate all derived assets (transparent `logo.png`, `favicon.png`, `og-{zh,en}.png`):
@@ -173,7 +181,7 @@ The script color-keys the warm-brown backdrop from the source asset (`#6F5939`, 
 
 ## Contributing
 
-Open issues for anything user-facing: copy edits, design tweaks, new locale support, accessibility fixes, broken links, download-button bugs. For app-specific bug reports (rendering glitches inside the reader, Share Extension issues, sandbox policy questions), open the issue in the closed-source app repo or use the in-app feedback channel — those topics need access to runtime internals.
+Open issues for anything user-facing: copy edits, design tweaks, new locale support, accessibility fixes, broken links, download-button bugs, release notes, signing keys.
 
 Before opening a PR:
 
@@ -188,7 +196,7 @@ Translation PRs are welcome for any locale — the dictionary contract is strict
 
 ## Privacy
 
-NovaView's privacy policy is the canonical reference for both the app and the site: **[`/zh/privacy`](https://novaview.app/zh/privacy)** · **[`/en/privacy`](https://novaview.app/en/privacy)**.
+NovaView's privacy policy is the canonical reference: **[`/zh/privacy`](https://novaview.app/zh/privacy)** · **[`/en/privacy`](https://novaview.app/en/privacy)**.
 
 The site itself collects nothing — no analytics SDK, no cookies, no third-party scripts. The only client-side storage is `localStorage` for the user's explicit locale and theme preferences.
 
@@ -196,6 +204,4 @@ The site itself collects nothing — no analytics SDK, no cookies, no third-part
 
 ## License
 
-The marketing site code (everything in this repo) is released under the **MIT License**. See [`LICENSE`](./LICENSE).
-
-The NovaView iOS / Android app (in `Woods30/NovaView`) is a separate work — see its own license terms when published.
+The contents of this repository — marketing site source, build scripts, tests, design assets — are released under the **MIT License**. See [`LICENSE`](./LICENSE).

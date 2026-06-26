@@ -33,10 +33,19 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build & verify
+  # Single combined job: build + ensure project exists + deploy. Splitting
+  # into separate jobs would require passing `dist/client` via artifacts,
+  # which complicates the project-create step (cloudflare/wrangler-action
+  # requires workingDirectory validation that fails when dist/client doesn't
+  # yet exist on a fresh checkout).
+  build-and-deploy:
+    name: Build, ensure project, deploy
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+
+    environment:
+      name: ${{ inputs.environment || 'production' }}
+      url: ${{ steps.deploy.outputs.deployment-url }}
 
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +66,7 @@ jobs:
 
       # prerender.mjs drives a headless Chromium via Playwright. The package
       # itself is already installed by pnpm above, but the browser binary
-      # isn't. Cache it under ~/.cache/ms-playwright so this stays fast.
+      # isn't.
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
 
@@ -83,39 +92,28 @@ jobs:
           test -f dist/client/sitemap.xml
           echo "✓ build output structure OK"
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist/client
-
-  deploy:
-    name: Deploy to Cloudflare Pages
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    # `environment` provides protection rules + secrets scoping on GitHub.
-    environment:
-      name: ${{ inputs.environment || 'production' }}
-      url: ${{ steps.deploy.outputs.deployment-url }}
-
-    steps:
-      # Ensure the Pages project exists. cloudflare/pages-action fails with
-      # "Project not found" if the project was never created in the
-      # Cloudflare dashboard. `wrangler pages project create` is idempotent
-      # — re-running on an existing project returns 409, which we ignore.
+      # Ensure the Pages project exists before deploying. cloudflare/pages-action
+      # errors with `Project not found` if the project has never been created
+      # in the Cloudflare dashboard. `wrangler pages project create` is
+      # idempotent — re-running on an existing project returns 409, which we
+      # deliberately ignore.
       - name: Ensure Pages project exists
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: dist/client
-          command: >-
-            pages project create novaview-com
-            --production-branch=main
-            --compatibility-date=2026-06-12
-            || echo "::warning::project create returned non-zero (likely already exists)"
-          quiet: false
+        id: ensure-project
+        run: |
+          if npx --yes wrangler pages project create novaview-com \
+              --production-branch=main \
+              --compatibility-date=2026-06-12 2>&1 | tee /tmp/project-create.log; then
+            echo "::notice::Created novaview-com Pages project"
+          elif grep -q "already exists" /tmp/project-create.log; then
+            echo "::notice::Project novaview-com already exists, continuing"
+          else
+            echo "::error::Failed to create project:"
+            cat /tmp/project-create.log
+            exit 1
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deploy to Cloudflare Pages
         id: deploy
@@ -128,9 +126,16 @@ jobs:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: '3'
 
+      - name: Deployment URL
+        if: steps.deploy.outputs.deployment-url != ''
+        run: |
+          echo "## Deployment successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 **${{ steps.deploy.outputs.deployment-url }}**" >> $GITHUB_STEP_SUMMARY
+
   lighthouse:
     name: Lighthouse mobile audit
-    needs: deploy
+    needs: build-and-deploy
     # Only run on production pushes (not manual previews). Keep it light
     # to stay under free-tier Cloudflare build minutes.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -139,7 +144,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with: { version: 9 }
       - uses: actions/setup-node@v4
         with: { node-version: '20', cache: pnpm }
       - run: pnpm install --frozen-lockfile

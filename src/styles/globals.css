@@ -36,9 +36,13 @@
 }
 .bg-brand-radial { background-image: var(--gradient-brand-radial); }
 
-/* —— Accent gradient text（hero 高亮词） —— */
+/* —— Accent gradient text（hero 高亮词） ——
+   Use a diagonal gradient with an explicit midpoint so both brand colors
+   show on short text (e.g. 5-char Chinese "AI 生成文档"). The 120deg
+   direction distributes cyan and purple across the glyphs instead of
+   stacking them horizontally where one half falls off the text bounds. */
 .accent {
-  background: linear-gradient(90deg, var(--color-brand-blue), var(--color-brand-purple));
+  background: linear-gradient(120deg, #60A5FA 0%, #818CF8 45%, #A78BFA 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

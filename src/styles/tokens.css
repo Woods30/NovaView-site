@@ -1,6 +1,6 @@
 :root {
   /* —— 色板（Light mode · cool slate · 简洁） —— */
-  --color-bg: #F8F9FB;            /* cool near-white (was #fafafa warm) */
+  --color-bg: #F5F7FA;            /* cool near-white with subtle blue tint (was #F8F9FB) */
   --color-surface: #FFFFFF;
   --color-fg: #0B1220;            /* deep slate-900, cool tint */
   --color-fg-muted: #64748B;      /* slate-500 */
@@ -18,7 +18,10 @@
   /* —— 品牌渐变（用于 hero 高亮 + 装饰） —— */
   --gradient-brand: linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%);
   --gradient-brand-soft: linear-gradient(135deg, #60A5FA20 0%, #A78BFA20 100%);
-  --gradient-brand-radial: radial-gradient(ellipse at center, #A78BFA18 0%, transparent 70%);
+  /* Brand radial glow — sits at top of hero, wider than tall. The previous
+     alpha (#A78BFA18 ≈ 9%) was too subtle to perceive on the cool bg.
+     Mix of brand purple + cyan gives a layered halo without being garish. */
+  --gradient-brand-radial: radial-gradient(ellipse 80% 60% at 50% 0%, #A78BFA40 0%, #60A5FA20 40%, transparent 75%);
 
   /* —— 字体 —— */
   --font-sans: 'Inter', -apple-system, system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;

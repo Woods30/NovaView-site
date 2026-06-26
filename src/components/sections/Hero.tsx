@@ -14,7 +14,7 @@ export interface HeroProps {
 
 export function Hero({ eyebrow, headline, sub, primaryCta, secondaryCta, metaItems, mockSlot }: HeroProps) {
   return (
-    <section className="pt-24 pb-16 lg:pt-24 lg:pb-18 relative overflow-hidden">
+    <section className="pt-16 pb-16 lg:pt-20 lg:pb-20 relative overflow-hidden">
       <div aria-hidden="true" className="absolute inset-0 bg-brand-radial pointer-events-none" />
       <Container className="relative">
         <div className="grid lg:grid-cols-[1.05fr_1fr] gap-12 lg:gap-16 items-center">

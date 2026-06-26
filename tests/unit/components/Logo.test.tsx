@@ -10,14 +10,20 @@ describe('Logo', () => {
     expect(img?.getAttribute('alt')).toBe('NovaView logo');
   });
 
-  it('sm 尺寸 = 32px', () => {
-    const { container } = render(<Logo size="sm" alt="x" />);
-    const img = container.querySelector('img');
-    expect(img?.getAttribute('width')).toBe('32');
+  it('默认 size = 60px', () => {
+    const { container } = render(<Logo alt="x" />);
+    expect(container.querySelector('img')?.getAttribute('width')).toBe('60');
   });
 
-  it('md 尺寸 = 60px', () => {
-    const { container } = render(<Logo size="md" alt="x" />);
-    expect(container.querySelector('img')?.getAttribute('width')).toBe('60');
+  it('自定义 size 通过 width/height 属性生效', () => {
+    const { container } = render(<Logo size={32} alt="x" />);
+    const img = container.querySelector('img');
+    expect(img?.getAttribute('width')).toBe('32');
+    expect(img?.getAttribute('height')).toBe('32');
+  });
+
+  it('始终引用同一个 logo.png 源', () => {
+    const { container } = render(<Logo size={180} alt="x" />);
+    expect(container.querySelector('img')?.getAttribute('src')).toBe('/brand/logo.png');
   });
 });

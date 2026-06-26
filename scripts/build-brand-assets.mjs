@@ -59,29 +59,19 @@ await sharp(logoBuf).toFile('public/brand/logo.png');
 const meta = await sharp('public/brand/logo.png').metadata();
 console.log('logo.png:', meta.width, 'x', meta.height);
 
-// All derivatives use a transparent background so the LOGO sits cleanly on
-// any surface (light/dark mode, hero glow, OG card, favicon).
-// favicon.png keeps a navy fill because browser chrome tab backgrounds
-// vary and a transparent favicon can look invisible on dark themes.
-await sharp('public/brand/logo.png')
-  .resize(32, 32, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-  .png({ quality: 90 })
-  .toFile('public/brand/logo-32.png');
-
-await sharp('public/brand/logo.png')
-  .resize(60, 60, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-  .png({ quality: 90 })
-  .toFile('public/brand/logo-60.png');
-
-await sharp('public/brand/logo.png')
-  .resize(180, 180, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-  .png({ quality: 90 })
-  .toFile('public/brand/logo-180.png');
-
+// Favicon: same transparent logo at 180×180 (works for desktop tab + Apple
+// touch icon). Browser chrome tabs vary in background, but the LOGO holds
+// enough contrast at this size to read on any tab color.
 await sharp('public/brand/logo.png')
   .resize(180, 180, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
   .png({ quality: 90 })
   .toFile('public/favicon.png');
+
+// Note: per-page display sizes (32 / 60 / 180 / etc.) are NOT pre-rendered.
+// The Logo component uses a single /brand/logo.png source and lets the
+// browser scale via width/height attributes. This keeps the asset surface
+// to one file and avoids the bitmap-vs-vector scaling trade-off that
+// pre-sized PNGs introduce.
 
 // OG images: solid background with logo centered
 // Reuse the 360px transparent logoBuf from above.

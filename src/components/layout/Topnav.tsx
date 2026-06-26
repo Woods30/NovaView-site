@@ -33,7 +33,7 @@ export function Topnav({ locale }: TopnavProps) {
           params={{ locale: urlLocale } as never}
           className="flex items-center gap-3 text-fg font-semibold"
         >
-          <Logo size="md" alt={t('brand.logo_alt')} />
+          <Logo size={60} alt={t('brand.logo_alt')} />
           <span className="text-base leading-tight">
             NovaView
             <small className="block text-[11px] font-normal text-fg-muted uppercase tracking-wide">

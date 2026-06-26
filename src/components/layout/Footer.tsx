@@ -25,7 +25,7 @@ export function Footer({ locale }: { locale: Locale }) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-3 mb-5">
-              <Logo size="md" alt={t('brand.logo_alt')} />
+              <Logo size={60} alt={t('brand.logo_alt')} />
               <span className="text-lg font-semibold">NovaView</span>
             </div>
             <p

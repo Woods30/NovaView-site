@@ -125,21 +125,44 @@ NovaView-site/
 
 ## 部署
 
-部署目标：Cloudflare Pages。从本仓库：
+本仓库通过 `.github/workflows/deploy.yml` 在每次 push 到 `main` 时自动部署到 Cloudflare Pages。Workflow 步骤：
+
+1. `pnpm typecheck` + `pnpm test`（单元测试）
+2. `pnpm build`（vite + Playwright 预渲染）
+3. 校验构建产物结构（7 个 HTML + 资源文件齐全）
+4. 通过官方 `cloudflare/pages-action` 上传 `dist/client` 到 Cloudflare Pages
+5. 对部署后的预览运行 Lighthouse 移动端审计
+
+### 一次性配置
+
+1. Cloudflare 控制台 → **Workers & Pages** → Create application → Pages → **Direct Upload** → 命名 `novaview-com`。（Direct Upload 是 `cloudflare/pages-action` 的写入目标；无需在控制台连接 GitHub 仓库，workflow 自己处理部署。）
+2. 从 <https://dash.cloudflare.com/profile/api-tokens> 获取一个带 `Cloudflare Pages: Edit` 权限的 **API token**。
+3. 从 Cloudflare 控制台侧栏获取 **Account ID**。
+4. GitHub 仓库 → **Settings → Secrets and variables → Actions**，添加：
+   - `CLOUDFLARE_API_TOKEN` — 第 2 步的 token
+   - `CLOUDFLARE_ACCOUNT_ID` — 第 3 步的 account ID
+5. （可选）**Settings → Environments → `production`**，添加同样的两个 secrets，作用域限定为 production 环境，避免预览部署误触生产。
+
+完成后，每次 push 到 `main` 都会自动部署。手动重新部署：
+
+```bash
+gh workflow run deploy.yml -f environment=production
+```
+
+### 本地手动部署
+
+如果需要绕过 GitHub Actions 直接部署：
 
 ```bash
 pnpm build
 pnpm dlx wrangler pages deploy dist/client --project-name=novaview-com
 ```
 
-Cloudflare Pages 项目配置：
+需要将 `CLOUDFLARE_API_TOKEN` 设为环境变量，并从控制台取 `CLOUDFLARE_ACCOUNT_ID`。
 
-- **Build command:** `pnpm build`
-- **Build output directory:** `dist/client`
-- **Node version:** 20
-- **环境变量:** `PUBLIC_SITE_URL=https://novaview.app`
+### 自定义域名
 
-`public/` 中的 `_headers` 和 `_redirects` 会随构建自动发布（CSP、安全头、`/zh` → `/zh/` 尾斜杠归一化）。
+首次部署后，在 Cloudflare 控制台 → `novaview-com` Pages 项目 → **Custom domains**，添加 `novaview.app`。Cloudflare 自动处理 DNS 记录和 HTTPS。wrangler.toml 中的 `PUBLIC_SITE_URL` 变量（用于 OG 标签和 canonical URL）应与生产域名一致。
 
 ---
 

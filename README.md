@@ -127,21 +127,44 @@ NovaView-site/
 
 ## Deploy
 
-Deploys target Cloudflare Pages. From this repo:
+This repo deploys automatically to Cloudflare Pages on every push to `main` via `.github/workflows/deploy.yml`. The workflow:
+
+1. Runs `pnpm typecheck` + `pnpm test` (unit)
+2. Runs `pnpm build` (vite + Playwright prerender)
+3. Verifies the build output structure (7 expected HTML files + assets)
+4. Uploads `dist/client` to Cloudflare Pages via the official `cloudflare/pages-action`
+5. Runs Lighthouse mobile audit on the deployed preview
+
+### One-time setup
+
+1. In Cloudflare dashboard → **Workers & Pages** → Create application → Pages → **Direct Upload** → name it `novaview-com`. (Direct Upload is what `cloudflare/pages-action` writes to; you don't need to connect the GitHub repo in the dashboard since the workflow handles deployment.)
+2. Get an **API token** with `Cloudflare Pages: Edit` permission from <https://dash.cloudflare.com/profile/api-tokens>.
+3. Get your **Account ID** from the Cloudflare dashboard sidebar.
+4. In GitHub repo → **Settings → Secrets and variables → Actions**, add:
+   - `CLOUDFLARE_API_TOKEN` — the token from step 2
+   - `CLOUDFLARE_ACCOUNT_ID` — the account ID from step 3
+5. (Optional) **Settings → Environments → `production`** to add the same two secrets, scoped to the production environment so preview deploys can't accidentally touch prod.
+
+After that, every push to `main` deploys automatically. Manual re-deploys:
+
+```bash
+gh workflow run deploy.yml -f environment=production
+```
+
+### Manual deploy from a local clone
+
+If you need to deploy without going through GitHub Actions:
 
 ```bash
 pnpm build
 pnpm dlx wrangler pages deploy dist/client --project-name=novaview-com
 ```
 
-Configure the Cloudflare Pages project to use:
+You'll need `CLOUDFLARE_API_TOKEN` set as an environment variable and `CLOUDFLARE_ACCOUNT_ID` from the dashboard.
 
-- **Build command:** `pnpm build`
-- **Build output directory:** `dist/client`
-- **Node version:** 20
-- **Environment variables:** `PUBLIC_SITE_URL=https://novaview.app`
+### Custom domain
 
-`_headers` and `_redirects` in `public/` ship automatically with the build (CSP, security headers, `/zh` → `/zh/` trailing-slash normalization).
+After the first deploy, in Cloudflare dashboard → `novaview-com` Pages project → **Custom domains**, add `novaview.app`. Cloudflare handles the DNS record and HTTPS automatically. The wrangler.toml `PUBLIC_SITE_URL` variable (used in OG tags and canonical URLs) should match the production domain.
 
 ---
 

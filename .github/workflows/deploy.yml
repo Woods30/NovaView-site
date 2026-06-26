@@ -1,0 +1,129 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    # Don't run deploy on push to docs/ or any markdown-only edit;
+    # only deploy when source or assets actually changed.
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'wrangler.toml'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Cloudflare Pages environment to deploy to'
+        required: true
+        default: production
+        type: choice
+        options:
+          - production
+          - preview
+
+# Cancel in-progress runs on the same branch when a new commit lands.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build (vite + prerender)
+        env:
+          PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL }}
+        run: pnpm build
+
+      - name: Verify build output
+        run: |
+          set -euo pipefail
+          test -f dist/client/index.html
+          for r in zh zh/landing zh/privacy en en/landing en/privacy; do
+            test -f "dist/client/$r/index.html" || { echo "MISSING: dist/client/$r/index.html"; exit 1; }
+          done
+          test -f dist/client/favicon.png
+          test -f dist/client/sitemap.xml
+          echo "✓ build output structure OK"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/client
+
+  deploy:
+    name: Deploy to Cloudflare Pages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # `environment` provides protection rules + secrets scoping on GitHub.
+    environment:
+      name: ${{ inputs.environment || 'production' }}
+      url: ${{ steps.deploy.outputs.deployment-url }}
+
+    steps:
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: novaview-com
+          directory: dist/client
+          # Don't fail the workflow on Pages-side warnings; only hard errors
+          # (auth, build, network) should break the deploy.
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: '3'
+
+  lighthouse:
+    name: Lighthouse mobile audit
+    needs: deploy
+    # Only run on production pushes (not manual previews). Keep it light
+    # to stay under free-tier Cloudflare build minutes.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - name: Lighthouse mobile (a11y + SEO + perf budget)
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          configPath: .lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true

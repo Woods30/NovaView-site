@@ -1,7 +1,13 @@
 name = "novaview-com"
 pages_build_output_dir = "./dist/client"
 compatibility_date = "2026-06-12"
-compatibility_flags = ["nodejs_compat"]
+# Pure static deploy — no Workers, no SSR, no nodejs_compat needed.
+# Compatibility flags intentionally omitted; add only if you ever wire
+# a Workers function into this Pages project.
 
 [vars]
 PUBLIC_SITE_URL = "https://novaview.app"
+
+# NOTE on secrets: anything sensitive (e.g. analytics keys added later) goes
+# in `[secrets]` block here. Cloudflare reads them from the dashboard at
+# deploy time. Do NOT commit secret values to git.

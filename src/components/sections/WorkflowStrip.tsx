@@ -22,7 +22,11 @@ export function WorkflowStrip({ eyebrow, title, sub, steps }: WorkflowStripProps
       <Container>
         <div className="bg-surface border border-border rounded-lg p-10 lg:p-12 flex flex-col gap-6">
           <span className="font-mono text-xs uppercase tracking-widest text-fg-muted font-medium">{eyebrow}</span>
-          <h2 className="text-3xl lg:text-5xl font-semibold leading-tight tracking-tight">{title}</h2>
+          {/* See SectionHead.tsx for the rationale on innerHTML titles. */}
+          <h2
+            className="text-3xl lg:text-5xl font-semibold leading-tight tracking-tight"
+            dangerouslySetInnerHTML={{ __html: title }}
+          />
           <p className="text-base lg:text-lg text-fg-muted leading-relaxed max-w-[60ch]">{sub}</p>
           <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] items-stretch">
             {steps.map((step, i) => (

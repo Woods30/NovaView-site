@@ -21,9 +21,15 @@ export function SectionHead({ eyebrow, title, sub, badge, anchor, className }: S
           </span>
         )}
       </div>
-      <h2 id={anchor} className="text-3xl lg:text-5xl font-semibold leading-tight tracking-tight scroll-mt-20">
-        {title}
-      </h2>
+      {/* `title` is rendered as HTML so i18n strings can use <br> for line breaks
+          (e.g. "现已支持 6 种格式，<br>一个应用全部打开"). Dict content is
+          authored in PRs and reviewed, so the XSS surface is null — no
+          user-controlled input ever reaches this attribute. */}
+      <h2
+        id={anchor}
+        className="text-3xl lg:text-5xl font-semibold leading-tight tracking-tight scroll-mt-20"
+        dangerouslySetInnerHTML={{ __html: title }}
+      />
       {sub && <p className="text-base lg:text-lg text-fg-muted leading-relaxed max-w-[60ch]">{sub}</p>}
     </Container>
   );

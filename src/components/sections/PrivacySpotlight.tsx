@@ -31,7 +31,13 @@ export function PrivacySpotlight({ pill, title, sub, items, flowRows, moreHref, 
         <div className="bg-surface border border-border rounded-lg p-8 lg:p-12 grid lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-14">
           <div className="flex flex-col gap-5">
             <Badge variant="success"><span className="opacity-60">●</span> {pill}</Badge>
-            <h2 className="text-3xl lg:text-5xl font-semibold leading-tight tracking-tight">{title}</h2>
+            {/* `title` rendered as HTML so i18n strings can use <br> for line
+                breaks. Dict content is reviewed in PRs — no user-controlled
+                input ever reaches this attribute. */}
+            <h2
+              className="text-3xl lg:text-5xl font-semibold leading-tight tracking-tight"
+              dangerouslySetInnerHTML={{ __html: title }}
+            />
             <p className="text-base text-fg-muted leading-relaxed">{sub}</p>
             <div className="grid gap-4 mt-4">
               {items.map((it) => (

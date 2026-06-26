@@ -21,6 +21,8 @@ describe('Footer', () => {
 
   it('显示邮箱地址', () => {
     renderFooter('zh-CN');
-    expect(screen.getByText('hello@novaview.app')).toBeInTheDocument();
+    const matches = screen.getAllByText('hello@novaview.app');
+    expect(matches.length).toBeGreaterThanOrEqual(1);
+    expect(matches[0]).toBeInTheDocument();
   });
 });

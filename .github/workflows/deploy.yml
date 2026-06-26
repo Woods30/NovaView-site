@@ -76,7 +76,7 @@ jobs:
         run: |
           set -euo pipefail
           test -f dist/client/index.html
-          for r in zh zh/landing zh/privacy en en/landing en/privacy; do
+          for r in zh zh/privacy en en/privacy; do
             test -f "dist/client/$r/index.html" || { echo "MISSING: dist/client/$r/index.html"; exit 1; }
           done
           test -f dist/client/favicon.png

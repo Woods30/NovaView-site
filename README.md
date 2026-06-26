@@ -127,23 +127,53 @@ NovaView-site/
 
 ## Deploy
 
-This repo deploys automatically to Cloudflare Pages on every push to `main` via `.github/workflows/deploy.yml`. The workflow:
+This repo deploys to Cloudflare Pages via `.github/workflows/deploy.yml`. The workflow is **release-triggered** — production only ships when a GitHub Release is published, not on every commit to `main`.
 
-1. Runs `pnpm typecheck` + `pnpm test` (unit)
-2. Runs `pnpm build` (vite + Playwright prerender)
-3. Verifies the build output structure (7 expected HTML files + assets)
-4. Uploads `dist/client` to Cloudflare Pages via the official `cloudflare/pages-action`
-5. Runs Lighthouse mobile audit on the deployed preview
+### Release flow
+
+```
+feature branch → PR → main (auto-deployed to preview URLs only)
+                          │
+                          └── Draft Release v1.4.3 → Publish
+                                                       │
+                                                       ▼
+                                  .github/workflows/deploy.yml
+                                                       │
+                                                       ▼
+                                  Build → Cloudflare Pages → novaview.app
+                                  + GitHub Release attached with app binaries
+```
+
+Why release-triggered and not push-to-main:
+
+- Site + app are versioned together — every release entry on the right sidebar contains the matching site build plus the signed app binaries in its assets
+- Direct pushes to `main` don't change production; only a published release does
+- Tags give us a clean audit trail: "what was live at v1.4.2?" → check out the tag, build, see
 
 ### One-time setup
 
-#### 1. Create the Cloudflare Pages project
+#### 1. Protect `main` (PRs only, no direct push)
+
+GitHub → **Settings → Branches → Add rule**:
+
+- **Branch name pattern:** `main`
+- ☑ **Require a pull request before merging**
+  - ☑ Require approvals: **1**
+- ☑ **Require status checks to pass before merging**
+  - Search for and select: **Build, ensure project, deploy**
+- ☑ **Do not allow bypassing the above settings**
+
+Save. From now on the only way to land changes on `main` is via PR. Direct pushes are rejected.
+
+The PR workflow runs the same build + typecheck + unit tests, so reviewers can see green checks before merging.
+
+#### 2. Create the Cloudflare Pages project
 
 Cloudflare dashboard → **Workers & Pages** → Create application → Pages → **Direct Upload** → name it `novaview-com`.
 
 (Direct Upload is what `cloudflare/pages-action` writes to. You don't need to connect the GitHub repo in the dashboard — the workflow handles deployment.)
 
-#### 2. Create a Cloudflare API token
+#### 3. Create a Cloudflare API token
 
 1. Open <https://dash.cloudflare.com/profile/api-tokens> → click **Create Token**
 2. Use the **Edit Cloudflare Pages** template (recommended) or build a custom token with `Account → Cloudflare Pages → Edit` permission, scoped to your account
@@ -152,34 +182,55 @@ Cloudflare dashboard → **Workers & Pages** → Create application → Pages �
 5. **Copy the token immediately** — Cloudflare only shows it once. Format: a 40-character hex string like `aBcD1234eFgH5678iJkL9012mNoP3456qRsT7890`
 6. Save it in a password manager before closing the tab
 
-#### 3. Get your Account ID
+#### 4. Get your Account ID
 
 On the Cloudflare dashboard home (<https://dash.cloudflare.com/>), scroll the right sidebar to the bottom and copy the **Account ID** (a 32-character hex string).
 
-#### 4. Add GitHub secrets
+#### 5. Add GitHub secrets
 
 In the GitHub repo → **Settings → Secrets and variables → Actions → New repository secret**, add two entries:
 
 | Name | Value |
 |---|---|
-| `CLOUDFLARE_API_TOKEN` | the token from step 2 |
-| `CLOUDFLARE_ACCOUNT_ID` | the account ID from step 3 |
+| `CLOUDFLARE_API_TOKEN` | the token from step 3 |
+| `CLOUDFLARE_ACCOUNT_ID` | the account ID from step 4 |
 
-#### 5. (Recommended) Scope secrets to the `production` environment
+#### 6. (Recommended) Scope secrets to the `production` environment
 
 GitHub → **Settings → Environments → New environment → `production`** → add the same two secrets under the environment's own secrets panel.
 
-Why: this way `workflow_dispatch` runs with `environment=preview` don't have access to production secrets. The workflow's `environment:` block makes GitHub inject only the matching secrets.
+Why: workflow_dispatch runs with `environment=preview` won't have access to production secrets. The workflow's `environment:` block makes GitHub inject only the matching secrets.
 
-#### 6. First-deploy sanity check
+#### 7. Shipping a release
+
+```bash
+git checkout main && git pull           # make sure you're on latest
+gh release create v1.4.3 \
+    --title "v1.4.3" \
+    --notes "What's new in this version..." \
+    path/to/app.ipa path/to/app.apk      # attach signed app binaries
+```
+
+`gh release create` publishes the release → triggers the workflow → builds + deploys.
+
+To deploy without an app release (site-only hotfix), create an empty release tag:
+
+```bash
+git tag v1.4.3-site.1 && git push origin v1.4.3-site.1
+gh release create v1.4.3-site.1 --generate-notes
+```
+
+#### 8. Manual deploy (escape hatch)
 
 ```bash
 gh workflow run deploy.yml -f environment=production
 ```
 
-Then GitHub → **Actions** tab → open the running workflow → check the **Deploy to Cloudflare Pages** job completes green. Cloudflare dashboard → `novaview-com` → **Deployments** should show the new entry.
+Or pick a specific ref:
 
-After that, every push to `main` deploys automatically.
+```bash
+gh workflow run deploy.yml -f environment=preview -f ref=feature-branch-name
+```
 
 ### Manual deploy from a local clone
 
@@ -195,6 +246,21 @@ You'll need `CLOUDFLARE_API_TOKEN` set as an environment variable and `CLOUDFLAR
 ### Custom domain
 
 After the first deploy, in Cloudflare dashboard → `novaview-com` Pages project → **Custom domains**, add `novaview.app`. Cloudflare handles the DNS record and HTTPS automatically. The wrangler.toml `PUBLIC_SITE_URL` variable (used in OG tags and canonical URLs) should match the production domain.
+
+### Branching workflow
+
+```
+main (protected) ───── publish v1.4.x ─────► deploy to Cloudflare Pages
+   ▲
+   │ PR (squash merge)
+   │
+feature/something ──── commits, push, open PR ────► CI runs build + tests
+```
+
+- `main` is the only release source. Direct pushes blocked by branch protection.
+- All changes go through a feature branch → PR → squash merge.
+- Release tags (`v*.*.*`) trigger the deploy workflow.
+- The PR workflow runs the same `typecheck + test + build` so reviewers see green checks before merging.
 
 ### Troubleshooting
 

@@ -1,18 +1,22 @@
 name: Deploy
 
+# Deploy to Cloudflare Pages when a GitHub Release is published.
+#
+# Why release-triggered (not push-to-main):
+#   - Site + app are versioned together — every release includes the site
+#     build matching the app build, plus the signed app binaries in the
+#     release's assets.
+#   - Pushing to main doesn't immediately change production; only a
+#     published release does. This forces a deliberate "this is shipping"
+#     decision per version bump.
+#   - Release tags give us a clean audit trail: "what was live at v1.4.2?"
+#     is answerable by checking out the v1.4.2 tag and running build.
+#
+# Branch protection: `main` is the only release source. Direct pushes are
+# disabled via GitHub branch rules — PRs only (see README → "Branching").
 on:
-  push:
-    branches: [main]
-    # Don't run deploy on push to docs/ or any markdown-only edit;
-    # only deploy when source or assets actually changed.
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'scripts/**'
-      - 'package.json'
-      - 'pnpm-lock.yaml'
-      - 'wrangler.toml'
-      - '.github/workflows/deploy.yml'
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       environment:
@@ -23,11 +27,15 @@ on:
         options:
           - production
           - preview
+      ref:
+        description: 'Git ref (branch/tag/SHA) to deploy from. Defaults to the release tag when triggered by release:published.'
+        required: false
+        default: ''
 
-# Cancel in-progress runs on the same branch when a new commit lands.
+# One in-flight run per release at a time. `cancel-in-progress: false` (the
+# default) so we never abort a half-deployed release.
 concurrency:
-  group: deploy-${{ github.ref }}
-  cancel-in-progress: true
+  group: deploy-${{ github.event.release.tag_name || github.ref }}
 
 permissions:
   contents: read
@@ -55,6 +63,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # For release:published, github.event.release.tag_name holds the
+          # version (e.g. v1.4.2). For manual runs, fall back to `inputs.ref`
+          # or the branch that triggered.
+          ref: ${{ github.event.release.tag_name || inputs.ref || github.ref }}
 
       # pnpm version comes from package.json `packageManager` field — don't
       # also pass `version:` here or the action errors with "Multiple versions
@@ -135,16 +148,17 @@ jobs:
       - name: Deployment URL
         if: steps.deploy.outputs.deployment-url != ''
         run: |
-          echo "## Deployment successful" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "🌐 **${{ steps.deploy.outputs.deployment-url }}**" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "## Deployment successful"
+            echo ""
+            echo "🌐 **${{ steps.deploy.outputs.deployment-url }}**"
+            echo ""
+            echo "Released from \`${{ github.event.release.tag_name || github.ref }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   lighthouse:
     name: Lighthouse mobile audit
     needs: build-and-deploy
-    # Only run on production pushes (not manual previews). Keep it light
-    # to stay under free-tier Cloudflare build minutes.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     # Lighthouse failures (browser quirks, CI flake) must NOT fail the
@@ -153,15 +167,12 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.ref || github.ref }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with: { node-version: '20', cache: pnpm }
       - run: pnpm install --frozen-lockfile
-      # treosh/lighthouse-ci-action ships its own chromium download, but the
-      # version pinned by the action throws `CHROME_INTERSTITIAL_ERROR` on
-      # localhost connections inside the runner. Reuse the Playwright
-      # chromium (which already handles this correctly) by symlinking it into
-      # the LHCI cache dir.
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
       - name: Serve prerendered HTML

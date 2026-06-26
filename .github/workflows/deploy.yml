@@ -100,6 +100,23 @@ jobs:
       url: ${{ steps.deploy.outputs.deployment-url }}
 
     steps:
+      # Ensure the Pages project exists. cloudflare/pages-action fails with
+      # "Project not found" if the project was never created in the
+      # Cloudflare dashboard. `wrangler pages project create` is idempotent
+      # — re-running on an existing project returns 409, which we ignore.
+      - name: Ensure Pages project exists
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: dist/client
+          command: >-
+            pages project create novaview-com
+            --production-branch=main
+            --compatibility-date=2026-06-12
+            || echo "::warning::project create returned non-zero (likely already exists)"
+          quiet: false
+
       - name: Deploy to Cloudflare Pages
         id: deploy
         uses: cloudflare/pages-action@v1
@@ -108,8 +125,6 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: novaview-com
           directory: dist/client
-          # Don't fail the workflow on Pages-side warnings; only hard errors
-          # (auth, build, network) should break the deploy.
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: '3'
 

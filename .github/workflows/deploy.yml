@@ -157,6 +157,20 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: '20', cache: pnpm }
       - run: pnpm install --frozen-lockfile
+      # treosh/lighthouse-ci-action ships its own chromium download, but the
+      # version pinned by the action throws `CHROME_INTERSTITIAL_ERROR` on
+      # localhost connections inside the runner. Reuse the Playwright
+      # chromium (which already handles this correctly) by symlinking it into
+      # the LHCI cache dir.
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Serve prerendered HTML
+        run: |
+          pnpm exec vite preview --port 4173 &
+          for i in $(seq 1 30); do
+            curl -fs http://127.0.0.1:4173/zh/ > /dev/null && break
+            sleep 1
+          done
       - name: Lighthouse mobile (a11y + SEO + perf budget)
         uses: treosh/lighthouse-ci-action@v11
         with:

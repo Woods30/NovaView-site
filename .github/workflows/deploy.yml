@@ -31,6 +31,12 @@ concurrency:
 
 permissions:
   contents: read
+  # cloudflare/pages-action writes a GitHub Deployment + sets commit status
+  # on success/failure. Both need explicit write permissions on top of
+  # the default `contents: read` token the runner ships with.
+  deployments: write
+  statuses: write
+  checks: write
 
 jobs:
   # Single combined job: build + ensure project exists + deploy. Splitting

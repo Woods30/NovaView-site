@@ -24,9 +24,9 @@ export function Footer({ locale }: { locale: Locale }) {
       <Container>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
-            <div className="flex items-center gap-2.5 mb-4">
-              <Logo size="sm" alt={t('brand.logo_alt')} />
-              <span className="text-base font-semibold">NovaView</span>
+            <div className="flex items-center gap-3 mb-5">
+              <Logo size="md" alt={t('brand.logo_alt')} />
+              <span className="text-lg font-semibold">NovaView</span>
             </div>
             <p
               className="text-sm text-fg-muted max-w-[36ch]"

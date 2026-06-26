@@ -27,13 +27,13 @@ export function Topnav({ locale }: TopnavProps) {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/85 backdrop-blur-md">
-      <Container className="flex h-14 items-center justify-between gap-4">
+      <Container className="flex h-[68px] items-center justify-between gap-4">
         <Link
           to={'/$locale' as never}
           params={{ locale: urlLocale } as never}
-          className="flex items-center gap-2.5 text-fg font-semibold"
+          className="flex items-center gap-3 text-fg font-semibold"
         >
-          <Logo size="sm" alt={t('brand.logo_alt')} />
+          <Logo size="md" alt={t('brand.logo_alt')} />
           <span className="text-base leading-tight">
             NovaView
             <small className="block text-[11px] font-normal text-fg-muted uppercase tracking-wide">

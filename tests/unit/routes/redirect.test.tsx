@@ -52,7 +52,7 @@ describe('根路径重定向', () => {
       to: string;
       params: { locale: string };
     };
-    expect(arg.to).toBe('/$locale');
+    expect(arg.to).toBe('/$locale/');
     expect(arg.params.locale).toBe('en');
   });
 });

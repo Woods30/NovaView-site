@@ -78,17 +78,12 @@ export function Footer({ locale }: { locale: Locale }) {
                   {t('footer.l.github')}
                 </a>
               </li>
-              <li>
-                <span className="text-fg-muted font-mono text-xs">
-                  {t('footer.l.version')}
-                </span>
-              </li>
             </ul>
           </div>
         </div>
         <div className="mt-10 pt-6 border-t border-border flex flex-col md:flex-row items-start md:items-center justify-between gap-2 text-xs text-fg-muted font-mono">
           <span>© 2026 NovaView. All rights reserved.</span>
-          <span>landing · v1.4.2 · 2026-06</span>
+          <span>© NovaView</span>
         </div>
       </Container>
     </footer>

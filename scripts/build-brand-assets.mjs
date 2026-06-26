@@ -15,8 +15,8 @@ const { data: raw, info } = await sharp(src)
   .raw()
   .toBuffer({ resolveWithObject: true });
 
-const NAVY = { r: 15, g: 27, b: 61 };        // exact backdrop color from the asset
-const TOLERANCE = 35;                          // generous — soft edges + glow
+const NAVY = { r: 111, g: 89, b: 57 };       // backdrop sampled from logo-source.png corners (#6F5939, warm tan)
+const TOLERANCE = 50;                          // generous — soft edges + warm glow
 const keyd = Buffer.alloc(raw.length);
 for (let i = 0; i < raw.length; i += 4) {
   const r = raw[i], g = raw[i + 1], b = raw[i + 2];

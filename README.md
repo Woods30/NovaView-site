@@ -137,19 +137,49 @@ This repo deploys automatically to Cloudflare Pages on every push to `main` via 
 
 ### One-time setup
 
-1. In Cloudflare dashboard → **Workers & Pages** → Create application → Pages → **Direct Upload** → name it `novaview-com`. (Direct Upload is what `cloudflare/pages-action` writes to; you don't need to connect the GitHub repo in the dashboard since the workflow handles deployment.)
-2. Get an **API token** with `Cloudflare Pages: Edit` permission from <https://dash.cloudflare.com/profile/api-tokens>.
-3. Get your **Account ID** from the Cloudflare dashboard sidebar.
-4. In GitHub repo → **Settings → Secrets and variables → Actions**, add:
-   - `CLOUDFLARE_API_TOKEN` — the token from step 2
-   - `CLOUDFLARE_ACCOUNT_ID` — the account ID from step 3
-5. (Optional) **Settings → Environments → `production`** to add the same two secrets, scoped to the production environment so preview deploys can't accidentally touch prod.
+#### 1. Create the Cloudflare Pages project
 
-After that, every push to `main` deploys automatically. Manual re-deploys:
+Cloudflare dashboard → **Workers & Pages** → Create application → Pages → **Direct Upload** → name it `novaview-com`.
+
+(Direct Upload is what `cloudflare/pages-action` writes to. You don't need to connect the GitHub repo in the dashboard — the workflow handles deployment.)
+
+#### 2. Create a Cloudflare API token
+
+1. Open <https://dash.cloudflare.com/profile/api-tokens> → click **Create Token**
+2. Use the **Edit Cloudflare Pages** template (recommended) or build a custom token with `Account → Cloudflare Pages → Edit` permission, scoped to your account
+3. Set a TTL — 90 days or less is a good security default
+4. Click **Continue to summary** → **Create Token**
+5. **Copy the token immediately** — Cloudflare only shows it once. Format: a 40-character hex string like `aBcD1234eFgH5678iJkL9012mNoP3456qRsT7890`
+6. Save it in a password manager before closing the tab
+
+#### 3. Get your Account ID
+
+On the Cloudflare dashboard home (<https://dash.cloudflare.com/>), scroll the right sidebar to the bottom and copy the **Account ID** (a 32-character hex string).
+
+#### 4. Add GitHub secrets
+
+In the GitHub repo → **Settings → Secrets and variables → Actions → New repository secret**, add two entries:
+
+| Name | Value |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | the token from step 2 |
+| `CLOUDFLARE_ACCOUNT_ID` | the account ID from step 3 |
+
+#### 5. (Recommended) Scope secrets to the `production` environment
+
+GitHub → **Settings → Environments → New environment → `production`** → add the same two secrets under the environment's own secrets panel.
+
+Why: this way `workflow_dispatch` runs with `environment=preview` don't have access to production secrets. The workflow's `environment:` block makes GitHub inject only the matching secrets.
+
+#### 6. First-deploy sanity check
 
 ```bash
 gh workflow run deploy.yml -f environment=production
 ```
+
+Then GitHub → **Actions** tab → open the running workflow → check the **Deploy to Cloudflare Pages** job completes green. Cloudflare dashboard → `novaview-com` → **Deployments** should show the new entry.
+
+After that, every push to `main` deploys automatically.
 
 ### Manual deploy from a local clone
 
@@ -165,6 +195,17 @@ You'll need `CLOUDFLARE_API_TOKEN` set as an environment variable and `CLOUDFLAR
 ### Custom domain
 
 After the first deploy, in Cloudflare dashboard → `novaview-com` Pages project → **Custom domains**, add `novaview.app`. Cloudflare handles the DNS record and HTTPS automatically. The wrangler.toml `PUBLIC_SITE_URL` variable (used in OG tags and canonical URLs) should match the production domain.
+
+### Troubleshooting
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `Authentication error [code: 10000]` | Wrong or expired token | Regenerate the token, update GitHub secret |
+| `Authentication error [code: 9109]` | Token missing `Pages: Edit` permission | Recreate token, confirm `Account → Cloudflare Pages → Edit` is set |
+| `Project not found` | Project name mismatch | Confirm `pages_build_output_dir` in `wrangler.toml` matches the Cloudflare project name |
+| `Account ID invalid` | Account ID copy error | Re-copy from Cloudflare dashboard sidebar |
+| Workflow succeeds but site doesn't update | Caching — Cloudflare Pages caches assets at the edge | Hard-refresh in browser (`Cmd-Shift-R`), or check Deployments tab for build hash |
+| `Build artifact validation failed` | Missing HTML file in `dist/client` | Run `pnpm build` locally to reproduce; check that prerender script ran without errors |
 
 ---
 

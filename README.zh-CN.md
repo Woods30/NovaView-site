@@ -135,19 +135,49 @@ NovaView-site/
 
 ### 一次性配置
 
-1. Cloudflare 控制台 → **Workers & Pages** → Create application → Pages → **Direct Upload** → 命名 `novaview-com`。（Direct Upload 是 `cloudflare/pages-action` 的写入目标；无需在控制台连接 GitHub 仓库，workflow 自己处理部署。）
-2. 从 <https://dash.cloudflare.com/profile/api-tokens> 获取一个带 `Cloudflare Pages: Edit` 权限的 **API token**。
-3. 从 Cloudflare 控制台侧栏获取 **Account ID**。
-4. GitHub 仓库 → **Settings → Secrets and variables → Actions**，添加：
-   - `CLOUDFLARE_API_TOKEN` — 第 2 步的 token
-   - `CLOUDFLARE_ACCOUNT_ID` — 第 3 步的 account ID
-5. （可选）**Settings → Environments → `production`**，添加同样的两个 secrets，作用域限定为 production 环境，避免预览部署误触生产。
+#### 1. 创建 Cloudflare Pages 项目
 
-完成后，每次 push 到 `main` 都会自动部署。手动重新部署：
+Cloudflare 控制台 → **Workers & Pages** → Create application → Pages → **Direct Upload** → 命名 `novaview-com`。
+
+（Direct Upload 是 `cloudflare/pages-action` 的写入目标。无需在控制台连接 GitHub 仓库 — workflow 自己处理部署。）
+
+#### 2. 创建 Cloudflare API token
+
+1. 打开 <https://dash.cloudflare.com/profile/api-tokens> → 点击 **Create Token**
+2. 使用 **Edit Cloudflare Pages** 模板（推荐），或自定义 token 时设 `Account → Cloudflare Pages → Edit` 权限，作用域限定到你的 account
+3. 设置 TTL — 90 天或更短（安全最佳实践）
+4. 点击 **Continue to summary** → **Create Token**
+5. **立即复制 token** — Cloudflare 只显示一次。格式：40 位十六进制字符串，类似 `aBcD1234eFgH5678iJkL9012mNoP3456qRsT7890`
+6. 关闭页面前保存到密码管理器
+
+#### 3. 获取 Account ID
+
+Cloudflare 控制台首页（<https://dash.cloudflare.com/>），右栏底部滚动到底部，复制 **Account ID**（32 位十六进制字符串）。
+
+#### 4. 添加 GitHub secrets
+
+GitHub 仓库 → **Settings → Secrets and variables → Actions → New repository secret**，添加两条：
+
+| Name | Value |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | 第 2 步的 token |
+| `CLOUDFLARE_ACCOUNT_ID` | 第 3 步的 account ID |
+
+#### 5. （推荐）将 secrets 限定到 `production` 环境
+
+GitHub → **Settings → Environments → New environment → `production`** → 在该环境自己的 secrets 面板下添加同样的两个 secrets。
+
+原因：`workflow_dispatch` 用 `environment=preview` 跑时拿不到 production secrets。workflow 里的 `environment:` 块会让 GitHub 仅注入匹配的 secrets。
+
+#### 6. 首次部署验证
 
 ```bash
 gh workflow run deploy.yml -f environment=production
 ```
+
+GitHub → **Actions** tab → 打开运行的 workflow → 确认 **Deploy to Cloudflare Pages** job 绿色完成。Cloudflare 控制台 → `novaview-com` → **Deployments** 应该出现新条目。
+
+完成后，每次 push 到 `main` 自动部署。
 
 ### 本地手动部署
 
@@ -163,6 +193,17 @@ pnpm dlx wrangler pages deploy dist/client --project-name=novaview-com
 ### 自定义域名
 
 首次部署后，在 Cloudflare 控制台 → `novaview-com` Pages 项目 → **Custom domains**，添加 `novaview.app`。Cloudflare 自动处理 DNS 记录和 HTTPS。wrangler.toml 中的 `PUBLIC_SITE_URL` 变量（用于 OG 标签和 canonical URL）应与生产域名一致。
+
+### 故障排查
+
+| 症状 | 原因 | 修复 |
+|---|---|---|
+| `Authentication error [code: 10000]` | Token 错误或过期 | 重新生成 token，更新 GitHub secret |
+| `Authentication error [code: 9109]` | Token 无 `Pages: Edit` 权限 | 重新创建 token，确认 `Account → Cloudflare Pages → Edit` 已设置 |
+| `Project not found` | 项目名不匹配 | 确认 `wrangler.toml` 的 `pages_build_output_dir` 与 Cloudflare 项目名一致 |
+| `Account ID invalid` | Account ID 复制错误 | 从 Cloudflare 控制台侧栏重新复制 |
+| Workflow 成功但站点未更新 | Cloudflare Pages 边缘缓存 | 浏览器硬刷新（`Cmd-Shift-R`），或查 Deployments tab 核对 build hash |
+| `Build artifact validation failed` | `dist/client` 缺 HTML | 本地跑 `pnpm build` 复现；检查 prerender 脚本是否报错 |
 
 ---
 

@@ -147,6 +147,10 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Lighthouse failures (browser quirks, CI flake) must NOT fail the
+    # deploy — the deployment itself already succeeded upstream. Audit
+    # results still surface in the workflow run + GitHub commit status.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

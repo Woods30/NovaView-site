@@ -9,9 +9,20 @@
       ],
       "numberOfRuns": 1,
       "settings": {
-        "preset": "mobile",
         "chromeFlags": "--headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage",
-        "skipAudits": ["uses-http2", "is-on-https"]
+        "skipAudits": ["uses-http2", "is-on-https"],
+        "screenEmulation": {
+          "mobile": true,
+          "width": 412,
+          "height": 823,
+          "deviceScaleFactor": 1.75,
+          "disabled": false
+        },
+        "throttling": {
+          "rttMs": 150,
+          "throughputKbps": 1638.4,
+          "cpuSlowdownMultiplier": 4
+        }
       }
     },
     "assert": {

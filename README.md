@@ -4,6 +4,8 @@
 >
 > iOS / Android app for reading Markdown, HTML, JSON, YAML, TXT and CSV files that ChatGPT, Claude and Codex generate.
 
+[中文版](./README.zh-CN.md) · English
+
 This is the open-source project repository for NovaView. It contains:
 
 - the **marketing website** source (this repo, [`src/`](./src))

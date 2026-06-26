@@ -38,7 +38,14 @@ export function LangSwitch({ currentLocale }: LangSwitchProps) {
           // sacrificing the runtime path. Use the URL form (zh / en) so the
           // static <a href> fallback also routes to a real page — important
           // for right-click "open in new tab" and SSR snapshots.
-          to={`/${localeToUrlLocale(loc)}${rest ? '/' + rest : ''}` as never}
+          //
+          // Always end with a trailing slash so the path matches the
+          // `/$locale/` route id (TanStack convention) and the prerendered
+          // HTML at `/<lang>/index.html`. Without it, Cloudflare/Vite
+          // preview falls back to the SPA shell and per-route <title>/meta
+          // (and any locale-aware content) don't load — which breaks the
+          // i18n-switch E2E that asserts the URL has a trailing slash.
+          to={`/${localeToUrlLocale(loc)}/${rest}` as never}
           params={{ locale: localeToUrlLocale(loc) } as never}
           className={cn(
             'rounded-pill px-2.5 py-1 text-xs font-medium transition-colors',

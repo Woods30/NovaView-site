@@ -55,6 +55,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # prerender.mjs drives a headless Chromium via Playwright. The package
+      # itself is already installed by pnpm above, but the browser binary
+      # isn't. Cache it under ~/.cache/ms-playwright so this stays fast.
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Typecheck
         run: pnpm typecheck
 

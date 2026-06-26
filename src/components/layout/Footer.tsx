@@ -83,7 +83,7 @@ export function Footer({ locale }: { locale: Locale }) {
         </div>
         <div className="mt-10 pt-6 border-t border-border flex flex-col md:flex-row items-start md:items-center justify-between gap-2 text-xs text-fg-muted font-mono">
           <span>© 2026 NovaView. All rights reserved.</span>
-          <span>© NovaView</span>
+          <span>hello@novaview.app</span>
         </div>
       </Container>
     </footer>

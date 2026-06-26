@@ -19,10 +19,11 @@ describe('Footer', () => {
     expect(screen.getByText('联系')).toBeInTheDocument();
   });
 
-  it('显示邮箱地址', () => {
+  it('联系列显示邮箱地址', () => {
     renderFooter('zh-CN');
-    const matches = screen.getAllByText('hello@novaview.app');
-    expect(matches.length).toBeGreaterThanOrEqual(1);
-    expect(matches[0]).toBeInTheDocument();
+    // The mailto link in the 联系 column; meta row no longer duplicates it.
+    const link = screen.getByRole('link', { name: 'hello@novaview.app' });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', 'mailto:hello@novaview.app');
   });
 });
